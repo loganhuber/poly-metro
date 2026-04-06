@@ -18,8 +18,9 @@ body {
     margin-top: 100px;
     padding: 20px;
     display: flex;
+    flex-direction: column;
     justify-content: center;
-    /* align-items: center; */
+    align-items: center;
     gap: 20px;
     min-height: 100vh;
 }
@@ -82,6 +83,16 @@ nav ul {
 
 .swap-control.hidden {
     display: none;
+}
+
+.export-container {
+    background: var(--background-container);
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 .metronome-container {
