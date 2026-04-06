@@ -252,7 +252,48 @@ function generateMidiData(totalSeconds) {
     return midiData;
 }
 
+function createMidiFile() {
+    const totalSeconds = (parseInt(cyclesInput.value * selectedPulseInput.value) || 4) * 60 / mainBPM;
+    const midiData = generateMidiData(totalSeconds);
+    const midi = new Midi();
+    const track = midi.addTrack();
+    
+    midiData.forEach(note => {
+        track.addNote({
+            midi: note.midi,
+            time: note.time,
+            duration: note.duration
+        });
+    });
+    
+    // Convert MIDI to binary array and create download
+    const midiArray = midi.toArray();
+    const blob = new Blob([new Uint8Array(midiArray)], { type: 'audio/midi' });
+    const url = URL.createObjectURL(blob);
 
+    const filename = createMidiFileName();
+    downloadMidiFile(url, filename);
+    
+}
+
+
+function downloadMidiFile(url, filename) {
+    // Create and trigger download
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = filename;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+}
+
+function createMidiFileName() {
+    const pulseInfo = `${mainPulseCount}`;
+    const polyrhythmInfo = `${secondaryPulseCount}`
+
+    return `${polyrhythmInfo}over${pulseInfo}_polyrhythm.mid`;
+}
 
 // Event listeners
 startStopBtn.addEventListener('click', startStopPlayback);
@@ -284,34 +325,7 @@ volumeSlider.addEventListener('input', (e) => {
     volume = parseFloat(e.target.value);
 });
 
-exportMidiBtn.addEventListener('click', () => {
-    const totalSeconds = (parseInt(cyclesInput.value) || 4) * 60 / mainBPM;
-    const midiData = generateMidiData(totalSeconds);
-    const midi = new Midi();
-    const track = midi.addTrack();
-    
-    midiData.forEach(note => {
-        track.addNote({
-            midi: note.midi,
-            time: note.time,
-            duration: note.duration
-        });
-    });
-    
-    // Convert MIDI to binary array and create download
-    const midiArray = midi.toArray();
-    const blob = new Blob([new Uint8Array(midiArray)], { type: 'audio/midi' });
-    const url = URL.createObjectURL(blob);
-    
-    // Create and trigger download
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = 'metronome.mid';
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    URL.revokeObjectURL(url);
-});
+exportMidiBtn.addEventListener('click', createMidiFile); 
 
 
 // Initialize
