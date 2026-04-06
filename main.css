@@ -14,15 +14,8 @@ body {
     font-family: Arial, sans-serif;
     background-color: #1e1c1c;
     color: var(--primary-text);
-    margin: 0;
-    margin-top: 100px;
-    padding: 20px;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    gap: 20px;
-    min-height: 100vh;
+    box-sizing: border-box;
+    overflow-x: hidden;
 }
 
 h1 {
@@ -57,11 +50,36 @@ nav ul {
 }
 
 .nav-link:hover {
+    cursor: pointer;
     text-decoration: underline;
 }
 /* end utils */
 
 
+/* TABS */
+
+.tab.hidden {
+    display: none;
+}
+
+.tab.visible {
+    margin: 0;
+    margin-top: 100px;
+    padding: 20px;
+    padding-bottom: 100px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+    min-height: 100vh;
+    width: 100%;
+    
+}
+
+.tab.instructions {
+    justify-content: flex-start;
+}
 
 /* COMPONENTS */
 
@@ -70,7 +88,7 @@ nav ul {
     flex-direction: column;
     align-items: flex-start;
     gap: 10px;
-    max-width: 500px;
+    max-width: 800px;
 }
 
 .swap-control {

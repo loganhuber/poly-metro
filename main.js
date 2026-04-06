@@ -118,7 +118,7 @@ function flashDot(container, index) {
 
 // Update displays
 function updateDisplays() {
-    bpmDisplay.textContent = mainBPM;
+    bpmDisplay.textContent = `${mainBPM} BPM`;
     if (secondaryPulseCount > 0) {
         const secondaryBPM = Math.round(mainBPM * secondaryPulseCount / mainPulseCount);
         secondaryBpmDisplay.textContent = `${secondaryBPM} BPM`;
