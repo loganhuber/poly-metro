@@ -171,6 +171,7 @@ function swapFrequencies() {
     frequencies.main = temp;
 }
 
+// Start/stop playback depending on current state. Initializes audio context on first start and resets scheduler variables to ensure timing is correct when restarting.
 function startStopPlayback() {
     if (!isPlaying) {
         // Start
@@ -197,6 +198,13 @@ function restartPlayback() {
 }
 }
 
+function updatePulseCounts() {
+    mainPulseCount = parseInt(selectedPulseInput.value, 10) || 4;
+    secondaryPulseCount = parseInt(selectedPolyrhythmInput.value, 10) || 0;
+    updateDisplays();
+    restartPlayback();
+}
+
 // Event listeners
 startStopBtn.addEventListener('click', startStopPlayback);
 
@@ -207,14 +215,6 @@ bpmInput.addEventListener('input', (e) => {
     updateDisplays();
     restartPlayback();
 });
-
-
-function updatePulseCounts() {
-    mainPulseCount = parseInt(selectedPulseInput.value, 10) || 4;
-    secondaryPulseCount = parseInt(selectedPolyrhythmInput.value, 10) || 0;
-    updateDisplays();
-    restartPlayback();
-}
 
 selectedPulseInput.addEventListener('change', updatePulseCounts);
 selectedPolyrhythmInput.addEventListener('change', updatePulseCounts);
