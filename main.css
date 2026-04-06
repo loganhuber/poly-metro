@@ -81,6 +81,10 @@ nav ul {
     justify-content: flex-start;
 }
 
+.tab.me {
+    justify-content: flex-start;
+}
+
 /* COMPONENTS */
 
 .info-container {
@@ -225,6 +229,12 @@ button:hover {
 
 .dot.active.secondary {
     background-color: orange;
+}
+
+#about-pic {
+    width: 200px;
+    aspect-ratio: 1/1;
+    border-radius: 50%;
 }
 
 /* END COMPONENTS */
