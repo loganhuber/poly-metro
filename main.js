@@ -1,4 +1,5 @@
-// Polyrhythmic Metronome
+// polyrhythm metronome
+
 
 // DOM elements
 const bpmInput = document.getElementById('bpm-input');

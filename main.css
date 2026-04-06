@@ -1,3 +1,6 @@
+/* polyrythm metronome */
+
+/* BASE */
 :root {
     --primary-text: rgb(201, 201, 201);
     --secondary-text: rgb(138, 138, 138);
@@ -17,6 +20,11 @@ body {
     min-height: 100vh;
 }
 
+h1 {
+    color: #ffffff;
+    margin-bottom: 30px;
+}
+
 header {
     position: absolute;
     top: 0;
@@ -25,12 +33,16 @@ header {
     background-color: rgb(19, 19, 19);
     color: white;
 }
+
 nav ul {
     list-style: none;;
     display: flex;
     gap: 20px;
 }
 
+/* -----END BASE------- */
+
+/* UTILS */
 
 .nav-link {
     text-decoration: none;
@@ -40,6 +52,11 @@ nav ul {
 .nav-link:hover {
     text-decoration: underline;
 }
+/* end utils */
+
+
+
+/* COMPONENTS */
 
 .swap-control {
     margin: 20px;
@@ -63,10 +80,6 @@ nav ul {
     width: 100%;
 }
 
-h1 {
-    color: #ffffff;
-    margin-bottom: 30px;
-}
 
 .controls {
     display: flex;
@@ -165,3 +178,5 @@ button:hover {
 .dot.active.secondary {
     background-color: orange;
 }
+
+/* END COMPONENTS */
