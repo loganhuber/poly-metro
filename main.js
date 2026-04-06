@@ -1,5 +1,7 @@
 // polyrhythm metronome
 
+// dependencies
+import { Midi }  from '@tonejs/midi';
 
 // DOM elements
 const bpmInput = document.getElementById('bpm-input');
@@ -14,6 +16,8 @@ const secondaryDotsContainer = document.getElementById('secondary-dots');
 const swapBtn = document.getElementById('swap-btn');
 const selectedPulseInput = document.getElementById('pulse');
 const selectedPolyrhythmInput = document.getElementById('polyrhythm');
+const exportMidiBtn = document.getElementById('export-midi');
+const cyclesInput = document.getElementById('cycles');
 
 // Audio context
 let audioContext;
@@ -205,6 +209,51 @@ function updatePulseCounts() {
     restartPlayback();
 }
 
+// Convert frequency (Hz) to MIDI note number
+function frequencyToMidi(frequency) {
+    return Math.round(12 * Math.log2(frequency / 440) + 69);
+}
+
+// Generate Midi file based on current settings and user-selected number of cycles
+function generateMidiData(totalSeconds) {
+    const midiData = [];
+    const mainInterval = 60 / mainBPM / mainSubdivision;
+    const mainCount = mainPulseCount;
+    const totalMainSubdivisions = mainPulseCount * mainSubdivision;
+    
+    for (let time = 0; time < totalSeconds; time += mainInterval) {
+        const mainSubdivisionStep = Math.floor(time / mainInterval);
+        const mainPulseIndex = Math.floor(mainSubdivisionStep / mainSubdivision) % mainCount;
+        const subIndex = mainSubdivisionStep % mainSubdivision;
+        const freq = subIndex === 0 && mainPulseIndex === 0 ? frequencies.first : frequencies.main;
+        const duration = subIndex === 0 ? 0.1 : 0.06;
+        
+        midiData.push({ 
+            time, 
+            midi: frequencyToMidi(freq),
+            duration: duration / 1000 // Convert ms to seconds for MIDI
+        });
+    }
+    
+    if (secondaryPulseCount > 0) {
+        const secondaryBPM = mainBPM * secondaryPulseCount / mainCount;
+        const secondaryInterval = 60 / secondaryBPM / secondarySubdivision;
+        
+        for (let time = 0; time < totalSeconds; time += secondaryInterval) {
+            const duration = (secondarySubdivisionStep % secondarySubdivision === 0) ? 0.08 : 0.05;
+            midiData.push({ 
+                time, 
+                midi: frequencyToMidi(frequencies.secondary),
+                duration: duration / 1000
+            });
+        }
+    }
+    
+    return midiData;
+}
+
+
+
 // Event listeners
 startStopBtn.addEventListener('click', startStopPlayback);
 
@@ -235,6 +284,34 @@ volumeSlider.addEventListener('input', (e) => {
     volume = parseFloat(e.target.value);
 });
 
+exportMidiBtn.addEventListener('click', () => {
+    const totalSeconds = (parseInt(cyclesInput.value) || 4) * 60 / mainBPM;
+    const midiData = generateMidiData(totalSeconds);
+    const midi = new Midi();
+    const track = midi.addTrack();
+    
+    midiData.forEach(note => {
+        track.addNote({
+            midi: note.midi,
+            time: note.time,
+            duration: note.duration
+        });
+    });
+    
+    // Convert MIDI to binary array and create download
+    const midiArray = midi.toArray();
+    const blob = new Blob([new Uint8Array(midiArray)], { type: 'audio/midi' });
+    const url = URL.createObjectURL(blob);
+    
+    // Create and trigger download
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = 'metronome.mid';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+});
 
 
 // Initialize

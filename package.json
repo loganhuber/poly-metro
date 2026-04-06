@@ -3,8 +3,11 @@
   "version": "1.0.0",
   "description": "",
   "main": "main.js",
+
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "vite",
+    "build": "vite build"
   },
   "repository": {
     "type": "git",
@@ -13,12 +16,15 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "type": "commonjs",
+  "type": "module",
   "bugs": {
     "url": "https://github.com/loganhuber/poly-metro/issues"
   },
   "homepage": "https://github.com/loganhuber/poly-metro#readme",
   "dependencies": {
     "@tonejs/midi": "^2.0.28"
+  },
+  "devDependencies": {
+    "vite": "^8.0.5"
   }
 }
