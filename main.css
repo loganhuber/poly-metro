@@ -237,4 +237,18 @@ button:hover {
     border-radius: 50%;
 }
 
+.list-links {
+    list-style: none;
+    li {
+        margin: 10px;
+    }
+    a {
+        color: var(--primary-text);
+    }
+    a:hover {
+            cursor: pointer;
+            color: var(--secondary-text);
+    }
+}
+
 /* END COMPONENTS */
