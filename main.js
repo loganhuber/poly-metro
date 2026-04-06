@@ -288,6 +288,7 @@ function downloadMidiFile(url, filename) {
     URL.revokeObjectURL(url);
 }
 
+// creates a name like 3over4_polyrhythm.mid 
 function createMidiFileName() {
     const pulseInfo = `${mainPulseCount}`;
     const polyrhythmInfo = `${secondaryPulseCount}`

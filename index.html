@@ -81,17 +81,40 @@
 
     <div class="tab instructions hidden" id="tab-instructions">
         <div class="info-container">
-            <h2>Instructions</h2>
-            <p>Welcome to the Polyrhythmic Metronome! Here's how you can use this tool:</p>
-            <ul>
-                <li>Adjust the main playback BPM. This is the main pulse rate.</li>
-                <li>Set the polyrhythmic ratio. First number is the main pulse count, the second is the polyrhythmic pulse count.</li>
-                <li>Optionally add subdivisions to each pulse. 1 means no subdivisions, 2 means half notes, 3 triplets, etc.</li>
-                <li>Control playback volume.</li>
-                <li>Use Swap Main/Secondary Tones to switch which tone plays for each rhythm. This is especially useful for hearing a different emphasis for each beat.</li>
-                <li>The visualization tells you the BPM for the polyrhythm's rate. This is useful for writing a tempo map that metrically modulates throughout a section.</li>
-                <li>Download a generated MIDI file of the metronome pattern.</li>
-            </ul>
+            <article>
+                <h2>Instructions</h2>
+                <p>Welcome to the Polyrhythmic Metronome! Here's how you can use this tool:</p>
+                <ul>
+                    <li>Adjust the main playback BPM. This is the main pulse rate.</li>
+                    <li>Set the polyrhythmic ratio. First number is the main pulse count, the second is the polyrhythmic pulse count.</li>
+                    <li>Optionally add subdivisions to each pulse. 1 means no subdivisions, 2 means half notes, 3 triplets, etc.</li>
+                    <li>Control playback volume.</li>
+                    <li>Use Swap Main/Secondary Tones to switch which tone plays for each rhythm. This is especially useful for hearing a different emphasis for each beat.</li>
+                    <li>The visualization tells you the BPM for the polyrhythm's rate. This is useful for writing a tempo map that metrically modulates throughout a section.</li>
+                    <li>Select the number of cycles you want and download a generated MIDI file of the metronome pattern. Cycles are based off the main pulse.</li>
+                </ul>
+            
+                <h3>Metric Modulation</h3>
+                <p>Metric modulation is changing the underlying rhythimic pulse. It's that sneaky trick instagram drummers are doing to ruin "Everyone Wants to Rule the world". This metronome can help tempo map these changes by providing the polyrhythm's BPM.</p>
+                <p>Let's say your song's in 4/4, you're playing a 3-over-4 polyrhythm over it, and you'd like your DAW's tempo map to shift into the same time in 3/4. Here's how you can do that:</p>
+                <h4>Example</h4>
+                <ul>
+                    <li>First, in Reaper, you must set your project's timebase to 'time'. If the timebase is set to anything else, the midi will stretch with the new BPM rather than maintaining the correct relationship. I'm not sure how other DAWs handle this, but you will most likely need to adjust your DAW's settings to avoid this effect.</li>
+                    <li>Make sure your project is set to the main time signature, then add a time signature change where you want DAW's click to adjust. You should set the new BPM to the polyrhythm's BPM and the new time signature to reflect new pulse.</li>
+                    <li>In this example, our project's original time signature is 4/4 at 120 BPM. The moment we want to switch, the time signature is switched to 3/4 at 90 BPM.</li>
+                    <li>At this point, the only thing that should be adjusting is the DAW's tempo map. The Midi file should take up the same amount of time as it was before.</li>
+                </ul>
+
+                <h3>Swap Main/Secondary Tones</h3>
+                <p>Polyrhythms can sound very different depending on which beats are emphasized. This feature will help you hear a different emphasis for the same polyrhythm.</p>
+                <p>Two common examples to hear a 3 vs 4 polyrhythm are:</p>
+                <ul>
+                    <li>"Pass The Goddamn Butter"</li>
+                    <li>"Pass Butter To The Left"</li>
+                </ul>
+                <p>Spoken at the same rate, both phrases rhythmically sound like a 3 vs 4 polyrhythm. However, "PASS the GOD-damn BUTTer" emphasizes the main pulse as a 3/4 polyrhythm, while the consonants in "PASS butTER TO the LEFT" emphasize the same exact rhythm in a 4/4 context.</p>
+
+            </article>
         </div>
 
     </div>
