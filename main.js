@@ -194,11 +194,6 @@ function updateSwapControl() {
     }
 }
 
-// Swap frequencies for main and secondary tones
-function swapFrequencies() {
-    // Frequencies are handled in getFrequency based on isSwapped()
-}
-
 // Start/stop playback depending on current state. Initializes audio context on first start and resets scheduler variables to ensure timing is correct when restarting.
 function startStopPlayback() {
     if (!isPlaying) {
