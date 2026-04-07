@@ -211,6 +211,8 @@ input[type="range"] {
     cursor: pointer;
     font-size: 16px;
     margin-top: 10px;
+    align-self: center;
+    width: clamp(150px, 40%, 400px);
 }
 
 .button:hover {
@@ -311,10 +313,14 @@ input[type="range"] {
     }
 
     .metronome-container {
-        width: 90%;
+        width: 85vw;
     }
 
     .export-container {
+        width: 90%;
+    }
+
+    .info-container {
         width: 90%;
     }
 }
