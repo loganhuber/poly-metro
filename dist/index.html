@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Polyrhythmic Metronome</title>
+  <script type="module" crossorigin src="/assets/index-CG-WCG26.js"></script>
+  <link rel="stylesheet" crossorigin href="/assets/index-Cu58PSZW.css">
+</head>
+<body>
+    <header role="banner">
+        <nav>
+            <ul>
+                <li class="nav-link"><button class="tab-btn selected" data-target="tab-metronome">Home</button></li>
+                <li class="nav-link"><button class="tab-btn" data-target="tab-instructions">Instructions</button></li>
+                <li class="nav-link"><button class="tab-btn" data-target="tab-me">Me</button></li>
+            </ul>
+        </nav>
+    </header>
+
+    <div class="tab visible" id="tab-metronome">
+        <div class="metronome-container">
+            <h1>Polyrhythmic Metronome</h1>
+            
+            <div class="controls">
+                    <div class="bpm-control">
+                        <label for="bpm-input">Main BPM:</label>
+                        <input type="number" id="bpm-input" min="1" max="300" value="120">
+                    </div>
+                    
+                    <div class="polyrhythm-control">
+                        <div class="control-group">
+                            <label for="ratio">Ratio:</label>
+                            <input type="number" id="pulse" placeholder="4" value="4" min="1" max="20">
+                            <span style="margin: 4px; font-weight: 800;">:</span>
+                            <input type="number" id="polyrhythm" placeholder="3" value="3" min="1" max="20">
+                        </div>
+                        <div class="control-group">
+                            <label for="main-subdivision">Pulse Subdivision:</label>
+                            <input type="number" id="main-subdivision" min="1" max="12" value="1">
+                        </div>
+                        <div class="control-group">
+                            <label for="secondary-subdivision">Polyrhythm Subdivision:</label>
+                            <input type="number" id="secondary-subdivision" min="1" max="12" value="1">
+                        </div>
+                    </div>
+                
+                
+                    
+                    <button class="button" id="start-stop-btn">Start</button>
+                </div>
+                <div class="swap-control">
+                    <label for="swap-btn">Swap Main/Secondary Tones:</label>
+                    <input type="checkbox" id="swap-btn">
+                </div>
+                <div class="visualization">
+                    <div class="flex-row">
+                        <p class="no-wrap">Main Pulse: <span id="bpm-display"></span></p>
+                        <div class="volume-control">
+                            <label for="main-volume-slider">Volume:</label>
+                            <input type="range" id="main-volume-slider" min="0" max="1" step="0.1" value="0.5">
+                        </div>
+                    </div>
+                    <div class="beat-container">
+                        <div class="dots" id="main-dots"></div>
+                    </div>
+                <div class="flex-row">
+                    <p class="no-wrap">Polyrhythm: <span id="secondary-bpm-display"></span></p>
+                    <div class="volume-control">
+                        <label for="secondary-volume-slider">Volume:</label>
+                        <input type="range" id="secondary-volume-slider" min="0" max="1" step="0.1" value="0.5">
+                    </div>
+                </div>
+                <div class="beat-container">
+                    <div class="dots" id="secondary-dots"></div>
+                </div>
+            </div>
+        </div>
+    
+        <div class="export-container">
+            <h2>Export Midi Data</h2>
+            <div>
+                <label for="cycles">Choose how many cycles:</label>
+                <input type="number" id="cycles" min="1" max="100" value="4">
+            </div>
+            <button class="button" id="export-midi">Export Midi</button>
+        </div>
+
+    </div>
+
+    <div class="tab instructions hidden" id="tab-instructions">
+        <div class="info-container">
+            <article>
+                <h2>Instructions</h2>
+                <p>Welcome to the Polyrhythmic Metronome! Here's how you can use this tool:</p>
+                <ul>
+                    <li>Adjust the main playback BPM. This is the main pulse rate.</li>
+                    <li>Set the polyrhythmic ratio. First number is the main pulse count, the second is the polyrhythmic pulse count.</li>
+                    <li>Optionally add subdivisions to each pulse. 1 means no subdivisions, 2 means half notes, 3 triplets, etc.</li>
+                    <li>Control playback volume for each pulse individually.</li>
+                    <li>Use Swap Main/Secondary Tones to switch which tone plays for each rhythm. This is especially useful for hearing a different emphasis for each beat.</li>
+                    <li>The visualization tells you the BPM for the polyrhythm's rate. This is useful for writing a tempo map that metrically modulates throughout a section.</li>
+                    <li>Select the number of cycles you want and download a generated MIDI file of the metronome pattern. Cycles are based off the main pulse.</li>
+                </ul>
+            
+                <h3>Metric Modulation</h3>
+                <p>Metric modulation is changing the underlying rhythimic pulse. It's that sneaky trick instagram drummers are doing to ruin "Everyone Wants to Rule the world". This metronome can help tempo map these changes by providing the polyrhythm's BPM.</p>
+                <p>Let's say your song's in 4/4, you're playing a 3-over-4 polyrhythm over it, and you'd like your DAW's tempo map to shift into the same time in 3/4. Here's how you can do that:</p>
+                <h4>Example</h4>
+                <ul>
+                    <li>First, in Reaper, you must set your project's timebase to 'time'. If the timebase is set to anything else, the midi will stretch with the new BPM rather than maintaining the correct relationship. I'm not sure how other DAWs handle this, but you will most likely need to adjust your DAW's settings to avoid this effect.</li>
+                    <li>Make sure your project is set to the main time signature, then add a time signature change where you want DAW's click to adjust. You should set the new BPM to the polyrhythm's BPM and the new time signature to reflect new pulse.</li>
+                    <li>In this example, our project's original time signature is 4/4 at 120 BPM. The moment we want to switch, the time signature is switched to 3/4 at 90 BPM.</li>
+                    <li>At this point, the only thing that should be adjusting is the DAW's tempo map. The Midi file should take up the same amount of time as it was before.</li>
+                </ul>
+
+                <h3>Swap Main/Secondary Tones</h3>
+                <p>Polyrhythms can sound very different depending on which beats are emphasized. This feature will help you hear a different emphasis for the same polyrhythm.</p>
+                <p>Two common examples to hear a 3 vs 4 polyrhythm are:</p>
+                <ul>
+                    <li>"Pass The Goddamn Butter"</li>
+                    <li>"Pass Butter To The Left"</li>
+                </ul>
+                <p>Spoken at the same rate, both phrases rhythmically sound like a 3 vs 4 polyrhythm. However, "PASS the GOD-damn BUTTer" emphasizes the main pulse as a 3/4 polyrhythm, while the consonants in "PASS butTER TO the LEFT" emphasize the same exact rhythm in a 4/4 context.</p>
+
+            </article>
+        </div>
+
+    </div>
+
+    <div class="tab me hidden" id="tab-me">
+        <h1>About Me</h1>
+        <img id="about-pic" src="/assets/logan-CMRK9Kbi.jpeg" alt="logan">
+        <p>This site was developed by me, Logan Huber.</p>
+        
+        <h4>More From Me</h4>
+        <ul class="list-links">
+            <li><a target="_blank" href="https://amammothtaskofficial.bandcamp.com/album/tasteless">listen to my band</a></li>
+            <li><a target="_blank" href="https://github.com/loganhuber">look at my github</a></li>
+            <li>send me words at amammothtaskmusic@gmail.com</li>
+        </ul>
+    </div>
+
+
+    
+    <script src="tabs.js"></script>
+</body>
+</html>
