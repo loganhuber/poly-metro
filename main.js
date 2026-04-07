@@ -40,7 +40,9 @@ let secondarySubdivisionStep = 0;
 const frequencies = {
     first: 800,
     main: 500,
-    secondary: 600
+    mainSubdivision: 400,
+    secondary: 600,
+    secondarySubdivision: 300
 };
 
 // Initialize audio context
@@ -71,6 +73,23 @@ function createClickSound(frequency = 800, duration = 0.1, volume = mainVolume) 
     oscillator.stop(audioContext.currentTime + duration);
 }
 
+// helper function to get correct frequency based on whether its a main pulse, main subdivision, secondary pulse, or secondary subdivision
+function getFrequency(isMainPulse, isSubdivision, isSecondary = false, isFirstBeat = false) {
+    if (isMainPulse && isFirstBeat) {
+        return frequencies.first;
+    } else if (isMainPulse && !isSubdivision) {
+        return isSwapped() ? frequencies.secondary : frequencies.main;
+    } else if (isMainPulse && isSubdivision) {
+        return isSwapped() ? frequencies.secondarySubdivision : frequencies.mainSubdivision;
+    } else if (isSecondary && !isSubdivision) {
+        return isSwapped() ? frequencies.main : frequencies.secondary;
+    } else if (isSecondary && isSubdivision) {
+        return isSwapped() ? frequencies.mainSubdivision : frequencies.secondarySubdivision;
+    }
+}
+
+
+
 // Scheduler for beats and subdivisions
 function scheduler() {
     if (!isPlaying) return;
@@ -84,8 +103,11 @@ function scheduler() {
     while (nextMainSubdivisionTime < currentTime + 0.1) {
         const mainPulseIndex = Math.floor(mainSubdivisionStep / mainSubdivision) % mainCount;
         const subIndex = mainSubdivisionStep % mainSubdivision;
-        const freq = subIndex === 0 && mainPulseIndex === 0 ? frequencies.first : frequencies.main;
-        createClickSound(freq, subIndex === 0 ? 0.1 : 0.06);
+        const isBeat = subIndex === 0;
+        const isFirstBeat = isBeat && mainPulseIndex === 0;
+        const freq = getFrequency(true, !isBeat, false, isFirstBeat);
+
+        createClickSound(freq, isBeat ? 0.1 : 0.06);
         flashDot(mainDotsContainer, mainSubdivisionStep % totalMainSubdivisions);
         nextMainSubdivisionTime += mainInterval;
         mainSubdivisionStep++;
@@ -97,7 +119,9 @@ function scheduler() {
         const totalSecondarySubdivisions = secondaryPulseCount * secondarySubdivision;
         const secondaryInterval = 60 / secondaryBPM / secondarySubdivision;
         while (nextSecondarySubdivisionTime < currentTime + 0.1) {
-            createClickSound(frequencies.secondary, secondarySubdivisionStep % secondarySubdivision === 0 ? 0.08 : 0.05, secondaryVolume);
+            const isBeatSecondary = secondarySubdivisionStep % secondarySubdivision === 0;
+            const freq = getFrequency(false, !isBeatSecondary, true, false);
+            createClickSound(freq, isBeatSecondary ? 0.08 : 0.05, secondaryVolume);
             flashDot(secondaryDotsContainer, secondarySubdivisionStep % totalSecondarySubdivisions);
             nextSecondarySubdivisionTime += secondaryInterval;
             secondarySubdivisionStep++;
@@ -172,9 +196,7 @@ function updateSwapControl() {
 
 // Swap frequencies for main and secondary tones
 function swapFrequencies() {
-    const temp = frequencies.first;
-    frequencies.first = frequencies.main;
-    frequencies.main = temp;
+    // Frequencies are handled in getFrequency based on isSwapped()
 }
 
 // Start/stop playback depending on current state. Initializes audio context on first start and resets scheduler variables to ensure timing is correct when restarting.
@@ -227,7 +249,14 @@ function generateMidiData(totalSeconds) {
         const mainSubdivisionStep = Math.floor(time / mainInterval);
         const mainPulseIndex = Math.floor(mainSubdivisionStep / mainSubdivision) % mainCount;
         const subIndex = mainSubdivisionStep % mainSubdivision;
-        const freq = subIndex === 0 && mainPulseIndex === 0 ? frequencies.first : frequencies.main;
+        let freq;
+        if (subIndex === 0 && mainPulseIndex === 0) {
+            freq = frequencies.first;
+        } else if (subIndex === 0) {
+            freq = isSwapped() ? frequencies.secondary : frequencies.main;
+        } else {
+            freq = isSwapped() ? frequencies.secondarySubdivision : frequencies.mainSubdivision;
+        }
         const duration = subIndex === 0 ? 0.1 : 0.06;
         
         midiData.push({ 
@@ -242,10 +271,17 @@ function generateMidiData(totalSeconds) {
         const secondaryInterval = 60 / secondaryBPM / secondarySubdivision;
         
         for (let time = 0; time < totalSeconds; time += secondaryInterval) {
+            const secondarySubdivisionStep = Math.floor(time / secondaryInterval);
+            let freq;
+            if (secondarySubdivisionStep % secondarySubdivision === 0) {
+                freq = isSwapped() ? frequencies.main : frequencies.secondary;
+            } else {
+                freq = isSwapped() ? frequencies.mainSubdivision : frequencies.secondarySubdivision;
+            }
             const duration = (secondarySubdivisionStep % secondarySubdivision === 0) ? 0.08 : 0.05;
             midiData.push({ 
                 time, 
-                midi: frequencyToMidi(frequencies.secondary),
+                midi: frequencyToMidi(freq),
                 duration: duration / 1000
             });
         }
