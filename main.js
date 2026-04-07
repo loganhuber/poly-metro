@@ -9,7 +9,8 @@ const bpmDisplay = document.getElementById('bpm-display');
 const mainSubdivisionInput = document.getElementById('main-subdivision');
 const secondarySubdivisionInput = document.getElementById('secondary-subdivision');
 const secondaryBpmDisplay = document.getElementById('secondary-bpm-display');
-const volumeSlider = document.getElementById('volume-slider');
+const mainVolumeSlider = document.getElementById('main-volume-slider');
+const secondaryVolumeSlider = document.getElementById('secondary-volume-slider');
 const startStopBtn = document.getElementById('start-stop-btn');
 const mainDotsContainer = document.getElementById('main-dots');
 const secondaryDotsContainer = document.getElementById('secondary-dots');
@@ -27,7 +28,8 @@ let mainSubdivision = parseInt(mainSubdivisionInput.value, 10) || 1;
 let secondarySubdivision = parseInt(secondarySubdivisionInput.value, 10) || 1;
 let mainPulseCount = parseInt(selectedPulseInput.value, 10) || 4;
 let secondaryPulseCount = parseInt(selectedPolyrhythmInput.value, 10) || 3;
-let volume = 0.5;
+let mainVolume = 0.5;
+let secondaryVolume = 0.5;
 
 // Scheduler variables
 let nextMainSubdivisionTime = 0;
@@ -52,7 +54,7 @@ function isSwapped() {
 }
 
 // Modular sound generation - easy to customize later
-function createClickSound(frequency = 800, duration = 0.1) {
+function createClickSound(frequency = 800, duration = 0.1, volume = mainVolume) {
     const oscillator = audioContext.createOscillator();
     const gainNode = audioContext.createGain();
     
@@ -95,7 +97,7 @@ function scheduler() {
         const totalSecondarySubdivisions = secondaryPulseCount * secondarySubdivision;
         const secondaryInterval = 60 / secondaryBPM / secondarySubdivision;
         while (nextSecondarySubdivisionTime < currentTime + 0.1) {
-            createClickSound(frequencies.secondary, secondarySubdivisionStep % secondarySubdivision === 0 ? 0.08 : 0.05);
+            createClickSound(frequencies.secondary, secondarySubdivisionStep % secondarySubdivision === 0 ? 0.08 : 0.05, secondaryVolume);
             flashDot(secondaryDotsContainer, secondarySubdivisionStep % totalSecondarySubdivisions);
             nextSecondarySubdivisionTime += secondaryInterval;
             secondarySubdivisionStep++;
@@ -322,9 +324,13 @@ secondarySubdivisionInput.addEventListener('input', (e) => {
     restartPlayback();
 });
 
-volumeSlider.addEventListener('input', (e) => {
-    volume = parseFloat(e.target.value);
+mainVolumeSlider.addEventListener('input', (e) => {
+    mainVolume = parseFloat(e.target.value);
 });
+
+secondaryVolumeSlider.addEventListener('input', (e) => {
+    secondaryVolume = parseFloat(e.target.value);
+})
 
 exportMidiBtn.addEventListener('click', createMidiFile); 
 

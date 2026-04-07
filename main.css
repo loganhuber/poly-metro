@@ -15,6 +15,7 @@ body {
     background-color: #1e1c1c;
     color: var(--primary-text);
     box-sizing: border-box;
+    width: 100%;
     overflow-x: hidden;
 }
 
@@ -26,18 +27,23 @@ h1 {
 header {
     position: absolute;
     top: 0;
-    width: 100%;
+    width: 100vw;
     padding: 0 1rem;
     background-color: rgb(19, 19, 19);
     color: var(--primary-text);
 }
 
-nav ul {
+nav {
+    margin: 0;
+}
+
+nav > ul {
     list-style: none;;
     display: flex;
     justify-content: flex-start;;
     gap: 20px;
-    margin-right: 40px;
+    flex: 1;
+    /* margin-right: 40px; */
 }
 
 /* -----END BASE------- */
@@ -52,6 +58,18 @@ nav ul {
 .nav-link:hover {
     cursor: pointer;
     text-decoration: underline;
+}
+
+.flex-row {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 20px;
+    flex: 1;
+}
+
+.no-wrap {
+    white-space: nowrap;
 }
 /* end utils */
 
@@ -73,7 +91,7 @@ nav ul {
     align-items: center;
     gap: 20px;
     min-height: 100vh;
-    width: 100%;
+    width: 100vw;
     
 }
 
@@ -119,20 +137,21 @@ nav ul {
 
 .metronome-container {
     background: var(--background-container);
-    padding: 30px;
+    padding: 50px;
     border-radius: 10px;
     box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
     text-align: center;
-    max-width: 700px;
-    width: 100%;
+    width: 40%;
 }
 
 
 .controls {
+    /* max-width: 100%; */
     display: flex;
     flex-direction: column;
     gap: 15px;
     margin-bottom: 30px;
+    flex: 1;
 }
 
 .polyrhythm-control {
@@ -158,6 +177,17 @@ input[type="number"], select, input[type="range"] {
     border: 1px solid #ccc;
     border-radius: 4px;
     background-color: var(--primary-text);
+}
+
+input[type="number"] {
+    min-width: 2rem;
+}
+
+input[type="number"]:focus, select:focus, input[type="range"]:focus {
+    outline: none;
+    /* border-color: var(--button-bg); */
+    border: 1px solid var(--button-bg);
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
 }
 
 input[type="range"] {
@@ -215,6 +245,8 @@ input[type="range"] {
     display: flex;
     gap: 10px;
     justify-content: flex-start;
+    flex-wrap: wrap;
+    max-width: 100%;
 }
 
 .dot {
