@@ -27,12 +27,17 @@
             <div class="acceleration-settings hidden" id="acceleration-settings">
                 <p>Practice building speed with gradually increasing BPM:</p>
                 <div>
-                    <label for="start-bpm">Start BPM:</label>
-                    <input type="number" id="start-bpm" min="1" max="300" value="120">
+                    <label for="accel-cycles">Cycles:</label>
+                    <input type="number" id="accel-cycles" min="1" max="10" value="4">
                 </div>
                 <div>
-                    <label for="end-bpm">End BPM:</label>
-                    <input type="number" id="end-bpm" min="1" max="300" value="180">
+                    <label for="start-bpm-display">Start BPM:</label>
+                    <input type="number" id="start-bpm-display" min="1" max="300" value="120">
+                </div>
+
+                <div>
+                    <label for="end-bpm-display">End BPM:</label>
+                    <input type="number" id="end-bpm-display" min="1" max="300" value="180">
                 </div>
             </div>
         </div>
@@ -49,7 +54,7 @@
                             <label for="ratio">Ratio:</label>
                             <input type="number" id="pulse" placeholder="4" value="4" min="1" max="20">
                             <span style="margin: 4px; font-weight: 800;">:</span>
-                            <input type="number" id="polyrhythm" placeholder="3" value="3" min="1" max="20">
+                            <input type="number" id="polyrhythm" placeholder="3" value="3" min="0" max="20">
                         </div>
                         <div class="control-group">
                             <label for="main-subdivision">Pulse Subdivision:</label>

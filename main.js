@@ -20,6 +20,16 @@ const selectedPolyrhythmInput = document.getElementById('polyrhythm');
 const exportMidiBtn = document.getElementById('export-midi');
 const cyclesInput = document.getElementById('cycles');
 
+// acceleration mode settings
+const accelCyclesInput = document.getElementById('accel-cycles');
+const accelToggle = document.getElementById('acceleration-btn');
+const startBPMDisplay = document.getElementById('start-bpm-display');
+const endBPMDisplay = document.getElementById('end-bpm-display');
+
+const accelEnabled = () => {
+    return accelToggle.checked;
+}
+
 // Audio context
 let audioContext;
 let isPlaying = false;
@@ -36,6 +46,8 @@ let nextMainSubdivisionTime = 0;
 let nextSecondarySubdivisionTime = 0;
 let mainSubdivisionStep = 0;
 let secondarySubdivisionStep = 0;
+let beatsPlayed = 0;
+let cycleCount = 0;
 
 const frequencies = {
     first: 800,
@@ -51,6 +63,16 @@ function initAudio() {
 // Check if user selected to swap tones
 function isSwapped() {
     return swapBtn.checked
+}
+
+function accelerateBPM() {
+    if (mainBPM >= parseInt(endBPMDisplay.value)) return; // Stop accelerating if we've reached the target BPM
+    cycleCount = 0;
+    mainBPM ++;
+    // Stop display from cutting off last dot in the display
+    setTimeout(() => {
+        updateDisplays();
+    }, 500);
 }
 
 // Modular sound generation - easy to customize later
@@ -89,7 +111,13 @@ function scheduler() {
         flashDot(mainDotsContainer, mainSubdivisionStep % totalMainSubdivisions);
         nextMainSubdivisionTime += mainInterval;
         mainSubdivisionStep++;
+        if (subIndex === 0) cycleCount++;
     }
+
+    if (accelEnabled() && cycleCount >= mainPulseCount * parseInt(accelCyclesInput.value)) {
+        accelerateBPM();
+    }
+    
     
     // Schedule secondary subdivisions if polyrhythm selected
     if (secondaryPulseCount > 0) {
@@ -107,6 +135,8 @@ function scheduler() {
     setTimeout(scheduler, 25); // Check every 25ms
 }
 
+
+
 // Flash visual indicator
 function flashDot(container, index) {
     const dots = container.children;
@@ -121,6 +151,8 @@ function flashDot(container, index) {
 // Update displays
 function updateDisplays() {
     bpmDisplay.textContent = `${mainBPM} BPM`;
+    startBPMDisplay.value = mainBPM;
+    // endBPMDisplay.value = endBPM;
     if (secondaryPulseCount > 0) {
         const secondaryBPM = Math.round(mainBPM * secondaryPulseCount / mainPulseCount);
         secondaryBpmDisplay.textContent = `${secondaryBPM} BPM`;
@@ -305,6 +337,13 @@ swapBtn.addEventListener('change', swapFrequencies);
 
 bpmInput.addEventListener('input', (e) => {
     mainBPM = parseInt(e.target.value) || 120;
+    updateDisplays();
+    restartPlayback();
+});
+
+startBPMDisplay.addEventListener('input', (e) => {
+    mainBPM = parseInt(e.target.value) || 120;
+    bpmInput.value = mainBPM;
     updateDisplays();
     restartPlayback();
 });
