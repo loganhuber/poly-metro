@@ -1,5 +1,7 @@
 const tabBtns = document.querySelectorAll('.tab-btn');
 const tabs = document.querySelectorAll('.tab');
+const accelerationBtn = document.getElementById('acceleration-btn');
+
 
 tabBtns.forEach(btn => {
     btn.addEventListener('click', () => {
@@ -24,4 +26,13 @@ tabBtns.forEach(btn => {
             }
         });
     });
+});
+
+accelerationBtn.addEventListener('change', () => {
+    const accelarationSettings = document.getElementById('acceleration-settings');
+    if (accelerationBtn.checked) {
+        accelarationSettings.classList.remove('hidden');
+    } else {
+        accelarationSettings.classList.add('hidden');
+    }
 });
