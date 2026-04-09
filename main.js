@@ -56,7 +56,9 @@ let bpmInterval = parseInt(bpmIntervalInput.value, 10) || 5
 const frequencies = {
     first: 800,
     main: 500,
-    secondary: 600
+    mainSubdivision: 400,
+    secondary: 600,
+    secondarySubdivision: 300
 };
 
 // Initialize audio context
@@ -99,6 +101,20 @@ function limitBpms() {
     };
 };
 
+// helper function to get correct frequency based on whether its a main pulse, main subdivision, secondary pulse, or secondary subdivision
+function getFrequency(isMainPulse, isSubdivision, isSecondary = false, isFirstBeat = false) {
+    if (isMainPulse && isFirstBeat) {
+        return frequencies.first;
+    } else if (isMainPulse && !isSubdivision) {
+        return isSwapped() ? frequencies.secondary : frequencies.main;
+    } else if (isMainPulse && isSubdivision) {
+        return isSwapped() ? frequencies.secondarySubdivision : frequencies.mainSubdivision;
+    } else if (isSecondary && !isSubdivision) {
+        return isSwapped() ? frequencies.main : frequencies.secondary;
+    } else if (isSecondary && isSubdivision) {
+        return isSwapped() ? frequencies.mainSubdivision : frequencies.secondarySubdivision;
+    }
+}
 
 // Modular sound generation - easy to customize later
 function createClickSound(frequency = 800, duration = 0.1, volume = mainVolume) {
@@ -132,12 +148,15 @@ function scheduler() {
     while (nextMainSubdivisionTime < currentTime + 0.1) {
         const mainPulseIndex = Math.floor(mainSubdivisionStep / mainSubdivision) % mainCount;
         const subIndex = mainSubdivisionStep % mainSubdivision;
-        const freq = subIndex === 0 && mainPulseIndex === 0 ? frequencies.first : frequencies.main;
+        // const freq = subIndex === 0 && mainPulseIndex === 0 ? frequencies.first : frequencies.main;
+        const isBeat = subIndex === 0;
+        const isFirstBeat = isBeat && mainPulseIndex === 0;
+        const freq = getFrequency(true, !isBeat, false, isFirstBeat);
         createClickSound(freq, subIndex === 0 ? 0.1 : 0.06);
         flashDot(mainDotsContainer, mainSubdivisionStep % totalMainSubdivisions);
         nextMainSubdivisionTime += mainInterval;
         mainSubdivisionStep++;
-        if (subIndex === 0) cycleCount++;
+        if (isBeat) cycleCount++;
     }
 
     if (accelEnabled() && cycleCount >= mainPulseCount * parseInt(accelCyclesInput.value)) {
@@ -150,8 +169,10 @@ function scheduler() {
         const secondaryBPM = mainBPM * secondaryPulseCount / mainCount;
         const totalSecondarySubdivisions = secondaryPulseCount * secondarySubdivision;
         const secondaryInterval = 60 / secondaryBPM / secondarySubdivision;
+        const isBeatSecondary = secondarySubdivisionStep % secondarySubdivision === 0;
+        const freq = getFrequency(false, !isBeatSecondary, true, false);
         while (nextSecondarySubdivisionTime < currentTime + 0.1) {
-            createClickSound(frequencies.secondary, secondarySubdivisionStep % secondarySubdivision === 0 ? 0.08 : 0.05, secondaryVolume);
+            createClickSound(freq, isBeatSecondary ? 0.08 : 0.05, secondaryVolume);
             flashDot(secondaryDotsContainer, secondarySubdivisionStep % totalSecondarySubdivisions);
             nextSecondarySubdivisionTime += secondaryInterval;
             secondarySubdivisionStep++;
