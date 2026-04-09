@@ -272,9 +272,15 @@ function startStopPlayback() {
         nextSecondarySubdivisionTime = audioContext.currentTime;
         mainSubdivisionStep = 0;
         secondarySubdivisionStep = 0;
+        cycleCount = 0;
         startStopBtn.textContent = 'Stop';
         scheduler();
     } else {
+        
+        if (accelEnabled()) {
+            bpmDisplay.textContent = mainBPM;
+            bpmInput.value = mainBPM;
+        };
         // Stop
         isPlaying = false;
         startStopBtn.textContent = 'Start';
