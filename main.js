@@ -25,6 +25,7 @@ const accelCyclesInput = document.getElementById('accel-cycles');
 const accelToggle = document.getElementById('acceleration-btn');
 const startBPMDisplay = document.getElementById('start-bpm-display');
 const endBPMDisplay = document.getElementById('end-bpm-display');
+const bpmIntervalInput = document.getElementById('bpm-interval')
 
 const accelEnabled = () => {
     return accelToggle.checked;
@@ -47,8 +48,10 @@ let nextMainSubdivisionTime = 0;
 let nextSecondarySubdivisionTime = 0;
 let mainSubdivisionStep = 0;
 let secondarySubdivisionStep = 0;
-let beatsPlayed = 0;
+
+// BPM Acceleration Variables
 let cycleCount = 0;
+let bpmInterval = parseInt(bpmIntervalInput.value, 10) || 5
 
 const frequencies = {
     first: 800,
@@ -69,13 +72,33 @@ function isSwapped() {
 function accelerateBPM() {
     if (mainBPM >= endBPM) return; // Stop accelerating if we've reached the target BPM
     cycleCount = 0;
-    mainBPM ++;
+    mainBPM += bpmInterval;
+    if (mainBPM >= endBPM) {
+        mainBPM = endBPM
+    }
     // Stop display from cutting off last dot in the display
     setTimeout(() => {
         updateDisplays();
     }, 50);
-
 }
+
+// Hard limit at 300BPM for mainBPm and endBPM
+function limitBpms() {
+    if (mainBPM > 300) {
+        mainBPM = 300;
+        bpmInput.value = 300;
+        startBPMDisplay.value = 300;
+        bpmDisplay.textContent = 300;
+        restartPlayback()
+    }
+    if (endBPM > 300) {
+        endBPM = 300;
+        endBPMDisplay.value = 300;
+        endBPMDisplay.setAttribute('min', mainBPM);
+        restartPlayback()
+    };
+};
+
 
 // Modular sound generation - easy to customize later
 function createClickSound(frequency = 800, duration = 0.1, volume = mainVolume) {
@@ -98,6 +121,7 @@ function createClickSound(frequency = 800, duration = 0.1, volume = mainVolume) 
 // Scheduler for beats and subdivisions
 function scheduler() {
     if (!isPlaying) return;
+    // limitBpms()
     
     const currentTime = audioContext.currentTime;
     const mainCount = mainPulseCount;
@@ -347,6 +371,7 @@ bpmInput.addEventListener('input', (e) => {
     mainBPM = parseInt(e.target.value) || 120;
     updateDisplays();
     restartPlayback();
+    limitBpms();
 });
 
 startBPMDisplay.addEventListener('input', (e) => {
@@ -354,17 +379,24 @@ startBPMDisplay.addEventListener('input', (e) => {
     bpmInput.value = mainBPM;
     updateDisplays();
     restartPlayback();
+    limitBpms();
 });
 
 
 endBPMDisplay.addEventListener('change', (e) => {
     endBPM = parseInt(e.target.value) || 180;
-
     if (endBPM < mainBPM) {
-        endBPM = mainBPM
-        endBPMDisplay.setAttribute('min', mainBPM)
-        endBPMDisplay.value = mainBPM
+        endBPM = mainBPM;
+        endBPMDisplay.setAttribute('min', mainBPM);
+        endBPMDisplay.value = mainBPM;
     }
+
+    limitBpms();
+    restartPlayback();
+})
+
+bpmIntervalInput.addEventListener('change', () => {
+    bpmInterval = parseInt(bpmIntervalInput.value)
 })
 
 selectedPulseInput.addEventListener('change', updatePulseCounts);
@@ -391,6 +423,10 @@ secondaryVolumeSlider.addEventListener('input', (e) => {
 })
 
 exportMidiBtn.addEventListener('click', createMidiFile); 
+
+accelToggle.addEventListener('click', restartPlayback);
+
+cyclesInput.addEventListener('change', restartPlayback)
 
 
 // Initialize

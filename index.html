@@ -19,16 +19,19 @@
 
     <div class="tab visible" id="tab-metronome">
         <div class="settings-container">
-            <div class="flex-row">
-                <label for="enable-acceleration-mode">Enable Acceleration Mode:</label>
-                <input type="checkbox" id="acceleration-btn">
-
+            <div class="flex-row checkbox-wrapper-2">
+                <label for="enable-acceleration-mode">Enable Acceleration Mode:<span></span></label>
+                <input type="checkbox" class="sc-gJwTLC ikxBAC" id="acceleration-btn">
             </div>
             <div class="acceleration-settings hidden" id="acceleration-settings">
                 <p>Practice building speed with gradually increasing BPM:</p>
                 <div>
                     <label for="accel-cycles">Cycles:</label>
                     <input type="number" id="accel-cycles" min="1" max="10" value="4">
+                </div>
+                <div>
+                    <label for="bpm-interval">BPM Interval:</label>
+                    <input type="number" id="bpm-interval" min="1" max="15" value="5">
                 </div>
                 <div>
                     <label for="start-bpm-display">Start BPM:</label>
