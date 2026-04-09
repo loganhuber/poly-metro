@@ -40,6 +40,7 @@ let mainPulseCount = parseInt(selectedPulseInput.value, 10) || 4;
 let secondaryPulseCount = parseInt(selectedPolyrhythmInput.value, 10) || 3;
 let mainVolume = 0.5;
 let secondaryVolume = 0.5;
+let endBPM = parseInt(endBPMDisplay.value, 10) || 180;
 
 // Scheduler variables
 let nextMainSubdivisionTime = 0;
@@ -66,13 +67,14 @@ function isSwapped() {
 }
 
 function accelerateBPM() {
-    if (mainBPM >= parseInt(endBPMDisplay.value)) return; // Stop accelerating if we've reached the target BPM
+    if (mainBPM >= endBPM) return; // Stop accelerating if we've reached the target BPM
     cycleCount = 0;
     mainBPM ++;
     // Stop display from cutting off last dot in the display
     setTimeout(() => {
         updateDisplays();
-    }, 500);
+    }, 50);
+
 }
 
 // Modular sound generation - easy to customize later
@@ -152,7 +154,13 @@ function flashDot(container, index) {
 function updateDisplays() {
     bpmDisplay.textContent = `${mainBPM} BPM`;
     startBPMDisplay.value = mainBPM;
-    // endBPMDisplay.value = endBPM;
+    endBPMDisplay.setAttribute('min', mainBPM)
+
+    // Ensure end BPM can not be lower than main BPM
+    if (mainBPM > endBPMDisplay.value) {
+        endBPMDisplay.value = mainBPM
+    }
+
     if (secondaryPulseCount > 0) {
         const secondaryBPM = Math.round(mainBPM * secondaryPulseCount / mainPulseCount);
         secondaryBpmDisplay.textContent = `${secondaryBPM} BPM`;
@@ -347,6 +355,17 @@ startBPMDisplay.addEventListener('input', (e) => {
     updateDisplays();
     restartPlayback();
 });
+
+
+endBPMDisplay.addEventListener('change', (e) => {
+    endBPM = parseInt(e.target.value) || 180;
+
+    if (endBPM < mainBPM) {
+        endBPM = mainBPM
+        endBPMDisplay.setAttribute('min', mainBPM)
+        endBPMDisplay.value = mainBPM
+    }
+})
 
 selectedPulseInput.addEventListener('change', updatePulseCounts);
 selectedPolyrhythmInput.addEventListener('change', updatePulseCounts);
