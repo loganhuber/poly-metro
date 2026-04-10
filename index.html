@@ -120,7 +120,7 @@
                 <ul>
                     <li>Adjust the main playback BPM. This is the main pulse rate.</li>
                     <li>Set the polyrhythmic ratio. First number is the main pulse count, the second is the polyrhythmic pulse count.</li>
-                    <li>Optionally add subdivisions to each pulse. 1 means no subdivisions, 2 means half notes, 3 triplets, etc.</li>
+                    <li>Optionally, add subdivisions to each pulse. 1 means no subdivisions, 2 means half notes, 3 triplets, etc.</li>
                     <li>Control playback volume for each pulse individually.</li>
                     <li>Use Swap Main/Secondary Tones to switch which tone plays for each rhythm. This is especially useful for hearing a different emphasis for each beat.</li>
                     <li>The visualization tells you the BPM for the polyrhythm's rate. This is useful for writing a tempo map that metrically modulates throughout a section.</li>
@@ -147,6 +147,15 @@
                 </ul>
                 <p>Spoken at the same rate, both phrases rhythmically sound like a 3 vs 4 polyrhythm. However, "PASS the GOD-damn BUTTer" emphasizes the main pulse as a 3/4 polyrhythm, while the consonants in "PASS butTER TO the LEFT" emphasize the same exact rhythm in a 4/4 context.</p>
 
+                <h3>Acceleration Mode</h3>
+                <p>Practice building speed with this mode. The tempo will gradually increase based on the inputs provided.</p>
+                <ul>
+                    <li>Cycles: Set how many bars the metronome plays back before incrementing.</li>
+                    <li>BPM Interval: Set how many BPM's the metronome increases after each cycle.</li>
+                    <li>Start BPM: How many BPM's the metronome starts playing.</li>
+                    <li>End BPM: Target BPM for the metronome to reach.</li>
+                </ul>
+                <p>Note: Exporting MIDI in Acceleration Mode will not export a MIDI track with incrementing BPM's.</p>
             </article>
         </div>
 
