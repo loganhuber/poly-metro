@@ -25,11 +25,11 @@ const accelCyclesInput = document.getElementById('accel-cycles');
 const accelToggle = document.getElementById('acceleration-btn');
 const startBPMDisplay = document.getElementById('start-bpm-display');
 const endBPMDisplay = document.getElementById('end-bpm-display');
-const bpmIntervalInput = document.getElementById('bpm-interval')
+const bpmIntervalInput = document.getElementById('bpm-interval');
 
 const accelEnabled = () => {
     return accelToggle.checked;
-}
+};
 
 // Audio context
 let audioContext;
@@ -52,6 +52,7 @@ let secondarySubdivisionStep = 0;
 // BPM Acceleration Variables
 let cycleCount = 0;
 let bpmInterval = parseInt(bpmIntervalInput.value, 10) || 5
+let startBpm = parseInt(startBPMDisplay.value, 10) || mainBPM
 
 const frequencies = {
     first: 800,
@@ -68,8 +69,8 @@ function initAudio() {
 
 // Check if user selected to swap tones
 function isSwapped() {
-    return swapBtn.checked
-}
+    return swapBtn.checked;
+};
 
 function accelerateBPM() {
     if (mainBPM >= endBPM) return; // Stop accelerating if we've reached the target BPM
@@ -91,6 +92,7 @@ function limitBpms() {
         bpmInput.value = 300;
         startBPMDisplay.value = 300;
         bpmDisplay.textContent = 300;
+        endBPMDisplay.value = 300;
         restartPlayback()
     }
     if (endBPM > 300) {
@@ -198,8 +200,8 @@ function flashDot(container, index) {
 // Update displays
 function updateDisplays() {
     bpmDisplay.textContent = `${mainBPM} BPM`;
-    startBPMDisplay.value = mainBPM;
-    endBPMDisplay.setAttribute('min', mainBPM)
+    // startBPMDisplay.value = mainBPM;
+    endBPMDisplay.setAttribute('min', mainBPM);
 
     // Ensure end BPM can not be lower than main BPM
     if (mainBPM > endBPMDisplay.value) {
@@ -244,7 +246,7 @@ function generateDots() {
             secondaryDotsContainer.appendChild(smallDot);
         }
     }
-}
+};
 
 // Show/hide swap control based on whether a polyrhythm is selected
 function updateSwapControl() {
@@ -253,14 +255,14 @@ function updateSwapControl() {
     } else {
         swapBtn.parentElement.classList.add('hidden');
     }
-}
+};
 
 // Swap frequencies for main and secondary tones
 function swapFrequencies() {
     const temp = frequencies.first;
     frequencies.first = frequencies.main;
     frequencies.main = temp;
-}
+};
 
 // Start/stop playback depending on current state. Initializes audio context on first start and resets scheduler variables to ensure timing is correct when restarting.
 function startStopPlayback() {
@@ -278,34 +280,38 @@ function startStopPlayback() {
     } else {
         
         if (accelEnabled()) {
-            bpmDisplay.textContent = mainBPM;
-            bpmInput.value = mainBPM;
+            
+            console.log("start BPM " + startBpm)
+            bpmInput.value = startBpm;
+            mainBPM = startBpm;
+            updateDisplays()
         };
         // Stop
+
         isPlaying = false;
         startStopBtn.textContent = 'Start';
     }
-}
+};
 
 // Restart playback when user changes settings to ensure beats are in sync with new parameters
 function restartPlayback() {
     if (isPlaying) {
-    startStopPlayback();
-    startStopPlayback();
-}
-}
+        startStopPlayback();
+        startStopPlayback();
+    };
+};
 
 function updatePulseCounts() {
     mainPulseCount = parseInt(selectedPulseInput.value, 10) || 4;
     secondaryPulseCount = parseInt(selectedPolyrhythmInput.value, 10) || 0;
     updateDisplays();
     restartPlayback();
-}
+};
 
 // Convert frequency (Hz) to MIDI note number
 function frequencyToMidi(frequency) {
     return Math.round(12 * Math.log2(frequency / 440) + 69);
-}
+};
 
 // Generate Midi file based on current settings and user-selected number of cycles
 function generateMidiData(totalSeconds) {
@@ -403,7 +409,8 @@ bpmInput.addEventListener('input', (e) => {
 
 startBPMDisplay.addEventListener('input', (e) => {
     mainBPM = parseInt(e.target.value) || 120;
-    bpmInput.value = mainBPM;
+    startBpm = mainBPM;
+    // bpmInput.value = mainBPM;
     updateDisplays();
     restartPlayback();
     limitBpms();

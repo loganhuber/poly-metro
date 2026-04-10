@@ -224,6 +224,14 @@ background-color: var(--button-hover-bg);
 
 /* COMPONENTS */
 
+.bpm-control {
+    display: block;
+}
+
+.bpm-control.hidden {
+    display: none;
+}
+
 .info-container {
     display: flex;
     flex-direction: column;
