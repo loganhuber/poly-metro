@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Polyrhythmic Metronome</title>
-  <script type="module" crossorigin src="/poly-metro/assets/index-BV3pcgB0.js"></script>
-  <link rel="stylesheet" crossorigin href="/poly-metro/assets/index-Cu58PSZW.css">
+  <script type="module" crossorigin src="/poly-metro/assets/index-cIIiTzI3.js"></script>
+  <link rel="stylesheet" crossorigin href="/poly-metro/assets/index-opkK-39D.css">
 </head>
 <body>
     <header role="banner">
@@ -19,9 +19,34 @@
     </header>
 
     <div class="tab visible" id="tab-metronome">
+        <div class="settings-container">
+            <div class="flex-row checkbox-wrapper-2">
+                <label for="enable-acceleration-mode">Enable Acceleration Mode:<span></span></label>
+                <input type="checkbox" class="sc-gJwTLC ikxBAC" id="acceleration-btn">
+            </div>
+            <div class="acceleration-settings hidden" id="acceleration-settings">
+                <p>Practice building speed with gradually increasing BPM:</p>
+                <div>
+                    <label for="accel-cycles">Cycles:</label>
+                    <input type="number" id="accel-cycles" min="1" max="10" value="4">
+                </div>
+                <div>
+                    <label for="bpm-interval">BPM Interval:</label>
+                    <input type="number" id="bpm-interval" min="1" max="15" value="5">
+                </div>
+                <div>
+                    <label for="start-bpm-display">Start BPM:</label>
+                    <input type="number" id="start-bpm-display" min="1" max="300" value="120">
+                </div>
+
+                <div>
+                    <label for="end-bpm-display">End BPM:</label>
+                    <input type="number" id="end-bpm-display" min="120" max="300" value="180">
+                </div>
+            </div>
+        </div>
         <div class="metronome-container">
             <h1>Polyrhythmic Metronome</h1>
-            
             <div class="controls">
                     <div class="bpm-control">
                         <label for="bpm-input">Main BPM:</label>
@@ -33,7 +58,7 @@
                             <label for="ratio">Ratio:</label>
                             <input type="number" id="pulse" placeholder="4" value="4" min="1" max="20">
                             <span style="margin: 4px; font-weight: 800;">:</span>
-                            <input type="number" id="polyrhythm" placeholder="3" value="3" min="1" max="20">
+                            <input type="number" id="polyrhythm" placeholder="3" value="3" min="0" max="20">
                         </div>
                         <div class="control-group">
                             <label for="main-subdivision">Pulse Subdivision:</label>
@@ -49,9 +74,9 @@
                     
                     <button class="button" id="start-stop-btn">Start</button>
                 </div>
-                <div class="swap-control">
+                <div class="swap-control checkbox-wrapper-2">
                     <label for="swap-btn">Swap Main/Secondary Tones:</label>
-                    <input type="checkbox" id="swap-btn">
+                    <input type="checkbox" class="sc-gJwTLC ikxBAC" id="swap-btn">
                 </div>
                 <div class="visualization">
                     <div class="flex-row">
@@ -96,7 +121,7 @@
                 <ul>
                     <li>Adjust the main playback BPM. This is the main pulse rate.</li>
                     <li>Set the polyrhythmic ratio. First number is the main pulse count, the second is the polyrhythmic pulse count.</li>
-                    <li>Optionally add subdivisions to each pulse. 1 means no subdivisions, 2 means half notes, 3 triplets, etc.</li>
+                    <li>Optionally, add subdivisions to each pulse. 1 means no subdivisions, 2 means half notes, 3 triplets, etc.</li>
                     <li>Control playback volume for each pulse individually.</li>
                     <li>Use Swap Main/Secondary Tones to switch which tone plays for each rhythm. This is especially useful for hearing a different emphasis for each beat.</li>
                     <li>The visualization tells you the BPM for the polyrhythm's rate. This is useful for writing a tempo map that metrically modulates throughout a section.</li>
@@ -123,6 +148,15 @@
                 </ul>
                 <p>Spoken at the same rate, both phrases rhythmically sound like a 3 vs 4 polyrhythm. However, "PASS the GOD-damn BUTTer" emphasizes the main pulse as a 3/4 polyrhythm, while the consonants in "PASS butTER TO the LEFT" emphasize the same exact rhythm in a 4/4 context.</p>
 
+                <h3>Acceleration Mode</h3>
+                <p>Practice building speed with this mode. The tempo will gradually increase based on the inputs provided.</p>
+                <ul>
+                    <li>Cycles: Set how many bars the metronome plays back before incrementing.</li>
+                    <li>BPM Interval: Set how many BPM's the metronome increases after each cycle.</li>
+                    <li>Start BPM: How many BPM's the metronome starts playing.</li>
+                    <li>End BPM: Target BPM for the metronome to reach.</li>
+                </ul>
+                <p>Note: Exporting MIDI in Acceleration Mode will not export a MIDI track with incrementing BPM's.</p>
             </article>
         </div>
 
