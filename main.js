@@ -458,7 +458,19 @@ secondaryVolumeSlider.addEventListener('input', (e) => {
 
 exportMidiBtn.addEventListener('click', createMidiFile); 
 
-accelToggle.addEventListener('click', restartPlayback);
+accelToggle.addEventListener('click', () => {
+    const accelarationSettings = document.getElementById('acceleration-settings');
+    if (accelToggle.checked) {
+        bpmInput.disabled = true;
+        bpmInput.parentElement.classList.add("hidden");
+        accelarationSettings.classList.remove('hidden');
+        restartPlayback();
+    } else {
+        bpmInput.disabled = false;
+        bpmInput.parentElement.classList.remove("hidden");
+        accelarationSettings.classList.add('hidden');
+    }
+})
 
 cyclesInput.addEventListener('change', restartPlayback)
 

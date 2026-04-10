@@ -1,7 +1,5 @@
 const tabBtns = document.querySelectorAll('.tab-btn');
 const tabs = document.querySelectorAll('.tab');
-const accelerationBtn = document.getElementById('acceleration-btn');
-
 
 tabBtns.forEach(btn => {
     btn.addEventListener('click', () => {
@@ -26,18 +24,4 @@ tabBtns.forEach(btn => {
             }
         });
     });
-});
-
-accelerationBtn.addEventListener('change', () => {
-    const accelarationSettings = document.getElementById('acceleration-settings');
-    const mainBpmDisplay = document.getElementById('bpm-input');
-    if (accelerationBtn.checked) {
-        mainBpmDisplay.disabled = true;
-        mainBpmDisplay.parentElement.classList.add("hidden")
-        accelarationSettings.classList.remove('hidden');
-    } else {
-        mainBpmDisplay.disabled = false;
-        mainBpmDisplay.parentElement.classList.remove("hidden")
-        accelarationSettings.classList.add('hidden');
-    }
 });
