@@ -19,11 +19,12 @@ const selectedPulseInput = document.getElementById('pulse');
 const selectedPolyrhythmInput = document.getElementById('polyrhythm');
 const exportMidiBtn = document.getElementById('export-midi');
 const cyclesInput = document.getElementById('cycles');
+const numInputContainer = document.querySelectorAll('.number-input-container');
 
 // acceleration mode settings
 const accelCyclesInput = document.getElementById('accel-cycles');
 const accelToggle = document.getElementById('acceleration-btn');
-const startBPMDisplay = document.getElementById('start-bpm-display');
+const startBpmDisplay = document.getElementById('start-bpm-display');
 const endBPMDisplay = document.getElementById('end-bpm-display');
 const bpmIntervalInput = document.getElementById('bpm-interval');
 
@@ -52,7 +53,7 @@ let secondarySubdivisionStep = 0;
 // BPM Acceleration Variables
 let cycleCount = 0;
 let bpmInterval = parseInt(bpmIntervalInput.value, 10) || 5
-let startBpm = parseInt(startBPMDisplay.value, 10) || mainBPM
+let startBpm = parseInt(startBpmDisplay.value, 10) || mainBPM
 
 const frequencies = {
     first: 800,
@@ -90,7 +91,7 @@ function limitBpms() {
     if (mainBPM > 300) {
         mainBPM = 300;
         bpmInput.value = 300;
-        startBPMDisplay.value = 300;
+        startBpmDisplay.value = 300;
         bpmDisplay.textContent = 300;
         endBPMDisplay.value = 300;
         restartPlayback()
@@ -400,38 +401,42 @@ startStopBtn.addEventListener('click', startStopPlayback);
 
 swapBtn.addEventListener('change', swapFrequencies);
 
-bpmInput.addEventListener('input', (e) => {
-    mainBPM = parseInt(e.target.value) || 120;
-    updateDisplays();
-    restartPlayback();
-    limitBpms();
-});
-
-startBPMDisplay.addEventListener('input', (e) => {
-    mainBPM = parseInt(e.target.value) || 120;
-    startBpm = mainBPM;
-    // bpmInput.value = mainBPM;
-    updateDisplays();
-    restartPlayback();
-    limitBpms();
-});
+// bpmInput.addEventListener('change', (e) => {
+//     mainBPM = parseInt(e.target.value) || 120;
+//     updateDisplays();
+//     restartPlayback();
+//     limitBpms();
+// });
 
 
-endBPMDisplay.addEventListener('change', (e) => {
-    endBPM = parseInt(e.target.value) || 180;
-    if (endBPM < mainBPM) {
-        endBPM = mainBPM;
-        endBPMDisplay.setAttribute('min', mainBPM);
-        endBPMDisplay.value = mainBPM;
-    }
+// accelertation mode event listenes
+// startBpmDisplay.addEventListener('input', (e) => {
+//     mainBPM = parseInt(e.target.value) || 120;
+//     startBpm = mainBPM;
+//     // bpmInput.value = mainBPM;
+//     updateDisplays();
+//     restartPlayback();
+//     limitBpms();
+// });
 
-    limitBpms();
-    restartPlayback();
-})
 
-bpmIntervalInput.addEventListener('change', () => {
-    bpmInterval = parseInt(bpmIntervalInput.value)
-})
+// endBPMDisplay.addEventListener('change', (e) => {
+//     endBPM = parseInt(e.target.value) || 180;
+//     if (endBPM < mainBPM) {
+//         endBPM = mainBPM;
+//         endBPMDisplay.setAttribute('min', mainBPM);
+//         endBPMDisplay.value = mainBPM;
+//     }
+
+//     limitBpms();
+//     restartPlayback();
+// })
+
+// bpmIntervalInput.addEventListener('change', () => {
+//     bpmInterval = parseInt(bpmIntervalInput.value)
+// })
+
+//----------------------------------
 
 selectedPulseInput.addEventListener('change', updatePulseCounts);
 selectedPolyrhythmInput.addEventListener('change', updatePulseCounts);
@@ -460,19 +465,75 @@ exportMidiBtn.addEventListener('click', createMidiFile);
 
 accelToggle.addEventListener('click', () => {
     const accelarationSettings = document.getElementById('acceleration-settings');
+    const bmpCtrlContainer = document.querySelector('.bpm-control')
     if (accelToggle.checked) {
         bpmInput.disabled = true;
-        bpmInput.parentElement.classList.add("hidden");
+        bmpCtrlContainer.classList.add('hidden')
         accelarationSettings.classList.remove('hidden');
         restartPlayback();
     } else {
         bpmInput.disabled = false;
-        bpmInput.parentElement.classList.remove("hidden");
+        bmpCtrlContainer.classList.remove('hidden')
         accelarationSettings.classList.add('hidden');
     }
 })
 
 cyclesInput.addEventListener('change', restartPlayback)
+
+// Handle custom number input buttons
+numInputContainer.forEach((container) => {
+    let interval
+    container.addEventListener("mousedown", (e) => {
+        const addBtn = e.target.closest('.add');
+        const subtractBtn = e.target.closest(".subtract");
+        const number = container.querySelector('input[type="number"]')
+        if (addBtn) {
+            interval = setInterval(() => number.stepUp(), 100);
+        }
+        if (subtractBtn) {
+            interval = setInterval(() => number.stepDown(), 100);
+        }
+    });
+    container.addEventListener("mouseup", () => {
+        clearInterval(interval);
+        const input = container.querySelector('input')
+        updateValues(input)
+        updateDisplays();
+        restartPlayback();
+        limitBpms();
+    });
+});
+
+
+// Map: sets input value to its corresponding variable
+const setters = {
+    'bpm-input' : (val) => mainBPM = val,
+    'pulse' : (val) => mainPulseCount = val,
+    'polyrhythm' : (val) => secondaryPulseCount = val,
+    'main-subdivision' : (val) => mainSubdivision = val,
+    'secondary-subdivision' : (val) => secondarySubdivision = val,
+    'accel-cycles' : (val) => cycleCount = val,
+    'bpm-interval' : (val) => bpmInterval = val,
+    'start-bpm-display' : (val) => {
+        startBpm = val
+        limitBpms()
+        restartPlayback()
+    },
+    'end-bpm-display' : (val) => {
+        endBPM = val
+        limitBpms()
+        restartPlayback()
+    }
+};
+
+// From plus/minus buttons
+// Points an input value to setters which resets the correspoding variables
+function updateValues(el) {
+    const func = setters[el.id];
+    if (!func) return;
+    func(parseInt(el.value));
+};
+
 
 
 // Initialize

@@ -318,14 +318,29 @@ input[type="number"], select, input[type="range"] {
 }
 
 input[type="number"] {
-    min-width: 2.5rem;
+
+    /* hide stock arrows on firefox */
+    -moz-appearance: textfield;
+    appearance: textfield; /* Standard property for future-proofing */
 }
 
 input[type="number"]:focus, select:focus, input[type="range"]:focus {
     outline: none;
-    /* border-color: var(--button-bg); */
     border: 1px solid var(--button-bg);
     box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+/* hide stock arros on chrome/safari/edge/opera */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+input[type=number] {
+  -moz-appearance: textfield;
+  appearance: textfield; /* Standard property for future-proofing */
 }
 
 input[type="range"] {
@@ -355,6 +370,22 @@ input[type="range"] {
     background-color: var(--button-hover-bg);
 }
 
+button.add, button.subtract {
+    /* border-radius: 50%; */
+    background-color: var(--button-bg);
+    font-weight: 800;
+
+    &:hover {
+        cursor: pointer;
+        background-color: grey;
+    }
+}
+
+.number-input-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
 
 .visualization {
     display: flex;
