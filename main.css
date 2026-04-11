@@ -311,14 +311,19 @@ label {
 }
 
 input[type="number"], select, input[type="range"] {
+    text-align: center;
     padding: 5px;
     border: 1px solid #ccc;
     border-radius: 4px;
     background-color: var(--primary-text);
 }
 
-input[type="number"] {
+input[type="number"]:hover {
+    cursor:default;
+}
 
+input[type="number"] {
+    width: 2rem;
     /* hide stock arrows on firefox */
     -moz-appearance: textfield;
     appearance: textfield; /* Standard property for future-proofing */
@@ -372,6 +377,12 @@ input[type="range"] {
 
 button.add, button.subtract {
     /* border-radius: 50%; */
+    width: 2.2rem;
+    border: 1px solid var(--background-main);
+    border-radius: 5px;
+    margin: 2px 2px;
+    /* padding: 0 20px; */
+    text-align: center;
     background-color: var(--button-bg);
     font-weight: 800;
 

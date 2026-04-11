@@ -25,7 +25,7 @@ const numInputContainer = document.querySelectorAll('.number-input-container');
 const accelCyclesInput = document.getElementById('accel-cycles');
 const accelToggle = document.getElementById('acceleration-btn');
 const startBpmDisplay = document.getElementById('start-bpm-display');
-const endBPMDisplay = document.getElementById('end-bpm-display');
+const endBpmDisplay = document.getElementById('end-bpm-display');
 const bpmIntervalInput = document.getElementById('bpm-interval');
 
 const accelEnabled = () => {
@@ -42,7 +42,7 @@ let mainPulseCount = parseInt(selectedPulseInput.value, 10) || 4;
 let secondaryPulseCount = parseInt(selectedPolyrhythmInput.value, 10) || 3;
 let mainVolume = 0.5;
 let secondaryVolume = 0.5;
-let endBPM = parseInt(endBPMDisplay.value, 10) || 180;
+let endBPM = parseInt(endBpmDisplay.value, 10) || 180;
 
 // Scheduler variables
 let nextMainSubdivisionTime = 0;
@@ -93,13 +93,13 @@ function limitBpms() {
         bpmInput.value = 300;
         startBpmDisplay.value = 300;
         bpmDisplay.textContent = 300;
-        endBPMDisplay.value = 300;
+        endBpmDisplay.value = 300;
         restartPlayback()
     }
     if (endBPM > 300) {
         endBPM = 300;
-        endBPMDisplay.value = 300;
-        endBPMDisplay.setAttribute('min', mainBPM);
+        endBpmDisplay.value = 300;
+        endBpmDisplay.setAttribute('min', mainBPM);
         restartPlayback()
     };
 };
@@ -202,11 +202,11 @@ function flashDot(container, index) {
 function updateDisplays() {
     bpmDisplay.textContent = `${mainBPM} BPM`;
     // startBPMDisplay.value = mainBPM;
-    endBPMDisplay.setAttribute('min', mainBPM);
+    endBpmDisplay.setAttribute('min', mainBPM);
 
     // Ensure end BPM can not be lower than main BPM
-    if (mainBPM > endBPMDisplay.value) {
-        endBPMDisplay.value = mainBPM
+    if (mainBPM > endBpmDisplay.value) {
+        endBpmDisplay.value = mainBPM
     }
 
     if (secondaryPulseCount > 0) {
@@ -408,6 +408,8 @@ swapBtn.addEventListener('change', swapFrequencies);
 //     limitBpms();
 // });
 
+// startBpmDisplay.addEventListener('blur', limitBpms());
+// endBpmDisplay.addEventListener('change', limitBpms)
 
 // accelertation mode event listenes
 // startBpmDisplay.addEventListener('input', (e) => {
@@ -488,10 +490,10 @@ numInputContainer.forEach((container) => {
         const subtractBtn = e.target.closest(".subtract");
         const number = container.querySelector('input[type="number"]')
         if (addBtn) {
-            interval = setInterval(() => number.stepUp(), 100);
+            interval = setInterval(() => number.stepUp(), 75);
         }
         if (subtractBtn) {
-            interval = setInterval(() => number.stepDown(), 100);
+            interval = setInterval(() => number.stepDown(), 75);
         }
     });
     container.addEventListener("mouseup", () => {
@@ -502,6 +504,14 @@ numInputContainer.forEach((container) => {
         restartPlayback();
         limitBpms();
     });
+
+    // container.addEventListener('input', () => {
+    //     const input = container.querySelector("input")
+    //     updateValues(input);
+    //     updateDisplays();
+    //     restartPlayback();
+    //     limitBpms();
+    // })
 });
 
 
