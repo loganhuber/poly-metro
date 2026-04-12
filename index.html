@@ -23,9 +23,9 @@
                 <label for="acceleration-btn">Enable Acceleration Mode:<span></span></label>
                 <input type="checkbox" class="sc-gJwTLC ikxBAC" id="acceleration-btn">
             </div>
-            <div class="acceleration-settings hidden" id="acceleration-settings">
-                <p>Practice building speed with gradually increasing BPM:</p>
-                <div>
+            <p>Practice building speed with gradually increasing BPM</p>
+            <div class="acceleration-settings control-card-container hidden" id="acceleration-settings">
+                <div class="control-card"> 
                     <label for="accel-cycles">Cycles:</label>
                         <div class="number-input-container">
                             <button class="add">+</button>
@@ -33,7 +33,7 @@
                             <button class="subtract">-</button>
                         </div>
                 </div>
-                <div>
+                <div class="control-card">
                     <label for="bpm-interval">BPM Interval:</label>
                     <div class="number-input-container">
                         <button class="add">+</button>
@@ -41,7 +41,7 @@
                         <button class="subtract">-</button>
                     </div>
                 </div>
-                <div>
+                <div class="control-card">
                     <label for="start-bpm-display">Start BPM:</label>
                     <div class="number-input-container">
                         <button class="add">+</button>
@@ -50,7 +50,7 @@
                     </div>
                 </div>
 
-                <div>
+                <div class="control-card">
                     <label for="end-bpm-display">End BPM:</label>
                     <div class="number-input-container">
                         <button class="add">+</button>
@@ -62,8 +62,8 @@
         </div>
         <div class="metronome-container">
             <h1>Polyrhythmic Metronome</h1>
-            <div class="controls">
-                    <div class="bpm-control">
+            <div class="controls control-card-container">
+                    <div class="bpm-control control-card">
                         <label for="bpm-input">Main BPM:</label>
                         <div class="number-input-container">
                             <button class="add">+</button>
@@ -72,47 +72,45 @@
                         </div>
                     </div>
                     
-                    <div class="polyrhythm-control">
-                        <div class="control-group">
-                            <label for="ratio">Ratio:</label>
-                            <div class="number-input-container">
-                                <button class="add">+</button>
-                                <input readonly type="number" id="pulse" placeholder="4" value="4" min="1" max="20">
-                                <button class="subtract">-</button>
-                            </div>
-                            <span style="margin: 4px; font-weight: 800;">:</span>
-                            <div class="number-input-container">
-                                <button class="add">+</button>
-                                <input readonly type="number" id="polyrhythm" placeholder="3" value="3" min="0" max="20">
-                                <button class="subtract">-</button>
-                            </div>
-                        </div>
-                        <div class="control-group">
-                            <label for="main-subdivision">Pulse Subdivision:</label>
-                            <div class="number-input-container">
+                    
+                    <div class="control-group control-card">
+                        <label for="ratio">Ratio:</label>
+                        <div class="number-input-container">
                             <button class="add">+</button>
-                                <input readonly type="number" id="main-subdivision" min="1" max="12" value="1">
+                            <input readonly type="number" id="pulse" placeholder="4" value="4" min="1" max="20">
                             <button class="subtract">-</button>
-                            </div>
                         </div>
-                        <div class="control-group">
-                            <label for="secondary-subdivision">Polyrhythm Subdivision:</label>
-                            <div class="number-input-container">
-                                <button class="add">+</button>
-                                <input readonly type="number" id="secondary-subdivision" min="1" max="12" value="1">
-                                <button class="subtract">-</button>
-                            </div>
+                        <span style="margin: 4px; font-weight: 800;">:</span>
+                        <div class="number-input-container">
+                            <button class="add">+</button>
+                            <input readonly type="number" id="polyrhythm" placeholder="3" value="3" min="0" max="20">
+                            <button class="subtract">-</button>
                         </div>
                     </div>
-                
-                
-                    
-                    <button class="button" id="start-stop-btn">Start</button>
+
+                    <div class="control-group control-card">
+                        <label for="main-subdivision">Pulse Subdivision:</label>
+                        <div class="number-input-container">
+                        <button class="add">+</button>
+                            <input readonly type="number" id="main-subdivision" min="1" max="12" value="1">
+                        <button class="subtract">-</button>
+                        </div>
+                    </div>
+
+                    <div class="control-group control-card">
+                        <label for="secondary-subdivision">Polyrhythm Subdivision:</label>
+                        <div class="number-input-container">
+                            <button class="add">+</button>
+                            <input readonly type="number" id="secondary-subdivision" min="1" max="12" value="1">
+                            <button class="subtract">-</button>
+                        </div>
+                    </div>
+
                 </div>
-                <div class="swap-control checkbox-wrapper-2">
-                    <label for="swap-btn">Swap Main/Secondary Tones:</label>
-                    <input type="checkbox" class="sc-gJwTLC ikxBAC" id="swap-btn">
-                </div>
+
+
+                <button class="button" id="start-stop-btn">Start</button>
+
                 <div class="visualization">
                     <div class="flex-row">
                         <p class="no-wrap">Main Pulse: <span id="bpm-display"></span></p>
@@ -121,32 +119,47 @@
                             <input type="range" id="main-volume-slider" min="0" max="1" step="0.1" value="0.5">
                         </div>
                     </div>
+
                     <div class="beat-container">
                         <div class="dots" id="main-dots"></div>
                     </div>
-                <div class="flex-row">
-                    <p class="no-wrap">Polyrhythm: <span id="secondary-bpm-display"></span></p>
-                    <div class="volume-control">
-                        <label for="secondary-volume-slider">Volume:</label>
-                        <input type="range" id="secondary-volume-slider" min="0" max="1" step="0.1" value="0.5">
+                    <div class="beat-container">
+                        <div class="dots" id="secondary-dots"></div>
+                    </div>
+
+                    <div class="flex-row">
+                        <p class="no-wrap">Polyrhythm Pulse: <span id="secondary-bpm-display"></span></p>
+                        <div class="volume-control">
+                            <label for="secondary-volume-slider">Volume:</label>
+                            <input type="range" id="secondary-volume-slider" min="0" max="1" step="0.1" value="0.5">
+                        </div>
                     </div>
                 </div>
-                <div class="beat-container">
-                    <div class="dots" id="secondary-dots"></div>
+
+                <div class="swap-control checkbox-wrapper-2">
+                    <label for="swap-btn">Swap Main/Secondary Tones:</label>
+                    <input type="checkbox" class="sc-gJwTLC ikxBAC" id="swap-btn">
                 </div>
             </div>
-        </div>
-    
-        <div class="export-container">
-            <h2>Export Midi Data</h2>
-            <div>
-                <label for="cycles">Choose how many cycles:</label>
-                <input type="number" id="cycles" min="1" max="100" value="4">
-            </div>
-            <button class="button" id="export-midi">Export Midi</button>
-        </div>
+        
+            <div class="export-container">
+                <h2>Export Midi Data</h2>
+                <div class="control-card">
+                    <label for="cycles">Choose how many cycles:</label>
+                    
+                    <div class="number-input-container">
+                        <button class="add">+</button>
+                        <input readonly type="number" id="cycles" min="1" max="100" value="4">
+                        <button class="subtract">-</button>
+                    </div>
 
+                </div>
+                <button class="button" id="export-midi">Export Midi</button>
+            </div>
+        
+        </div>
     </div>
+    
 
     <div class="tab instructions hidden" id="tab-instructions">
         <div class="info-container">

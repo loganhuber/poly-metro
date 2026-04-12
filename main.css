@@ -8,11 +8,12 @@
     --background-container: rgb(42, 41, 41);
     --button-bg: rgb(192, 22, 22);
     --button-hover-bg: rgb(100, 14, 14);
+    --card-bg: #1e1c1c;
 }
 
 body {
     font-family: Arial, sans-serif;
-    background-color: #1e1c1c;
+    background-color: var(--card-bg);
     color: var(--primary-text);
     box-sizing: border-box;
     width: 100%;
@@ -223,11 +224,9 @@ background-color: var(--button-hover-bg);
 
 .acceleration-settings {
     margin-top: 20px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 20px;
 }
+
+
 .acceleration-settings.hidden {
     display: none;
 }
@@ -235,9 +234,36 @@ background-color: var(--button-hover-bg);
 
 /* COMPONENTS */
 
-.bpm-control {
-    display: block;
+.control-card-container {
+    margin-top: 20px;
+    display: grid;
+    grid-template-columns: auto auto;
+    /* align-items: center;
+    justify-content: center; */
+    width: 100%;
+    gap: 10px;
 }
+
+.control-card {
+    width: 90%;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: .4rem;
+    background-color: #1e1c1c;
+    border-radius: 5px;
+    margin: 0 auto;
+    padding: 3% 3%;
+
+        & > * {
+        width: 45%;
+        margin: 5px;
+    }
+}
+
+/* .bpm-control {
+    display: flex;
+} */
 
 .bpm-control.hidden {
     display: none;
@@ -283,27 +309,26 @@ background-color: var(--button-hover-bg);
 }
 
 
-.controls {
-    /* max-width: 100%; */
+/* .controls {
     display: flex;
     flex-direction: column;
     gap: 15px;
     margin-bottom: 30px;
     flex: 1;
-}
+} */
 
-.polyrhythm-control {
+/* .polyrhythm-control {
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: 20px;
-}
-.control-group {
+} */
+/* .control-group {
     display: flex;
     flex-direction: row;
     align-items: center;
     /* justify-content: space-between; */
-}
+/* } */ 
 
 label {
     font-weight: bold;
@@ -399,11 +424,14 @@ button.add, button.subtract {
 }
 
 .visualization {
+    padding: .8rem;
     display: flex;
     flex-direction: column;
     gap: 20px;
     width: clamp(300px, 80%, 100%);
-    margin: 0 auto;
+    margin: 10px auto;
+    background-color: var(--card-bg);
+    border-radius: 5px;
 }
 
 .beat-container {
