@@ -478,7 +478,6 @@ const setters = {
     'secondary-subdivision' : (val) => secondarySubdivision = val,
     'accel-cycles' : (val) => cycleCount = val,
     'bpm-interval' : (val) => bpmInterval = val,
-    'cycles' : (val) => midiCyclesInput = val,
     'start-bpm-display' : (val) => {
         startBpm = val
         limitBpms()
