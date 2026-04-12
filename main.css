@@ -242,6 +242,7 @@ background-color: var(--button-hover-bg);
     justify-content: center; */
     width: 100%;
     gap: 10px;
+
 }
 
 .control-card {
@@ -410,6 +411,7 @@ button.add, button.subtract {
     text-align: center;
     background-color: var(--button-bg);
     font-weight: 800;
+    user-select: none;
 
     &:hover {
         cursor: pointer;
@@ -421,6 +423,9 @@ button.add, button.subtract {
     display: flex;
     flex-direction: column;
     align-items: center;
+    & > * {
+        user-select: none;
+    }
 }
 
 .visualization {

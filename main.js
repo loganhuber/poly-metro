@@ -63,6 +63,35 @@ const frequencies = {
     secondarySubdivision: 300
 };
 
+// Map: sets input value to its corresponding variable
+const setters = {
+    'bpm-input' : (val) => mainBPM = val,
+    'pulse' : (val) => mainPulseCount = val,
+    'polyrhythm' : (val) => secondaryPulseCount = val,
+    'main-subdivision' : (val) => mainSubdivision = val,
+    'secondary-subdivision' : (val) => secondarySubdivision = val,
+    'accel-cycles' : (val) => cycleCount = val,
+    'bpm-interval' : (val) => bpmInterval = val,
+    'start-bpm-display' : (val) => {
+        startBpm = val
+        limitBpms()
+        restartPlayback()
+    },
+    'end-bpm-display' : (val) => {
+        endBPM = val
+        limitBpms()
+        restartPlayback()
+    }
+};
+
+// From plus/minus buttons
+// Points an input value to setters which resets the correspoding variables
+function updateValues(el) {
+    const func = setters[el.id];
+    if (!func) return;
+    func(parseInt(el.value));
+};
+
 // Initialize audio context
 function initAudio() {
     audioContext = new (window.AudioContext || window.webkitAudioContext)();
@@ -443,10 +472,7 @@ accelToggle.addEventListener('click', () => {
 
 midiCyclesInput.addEventListener('change', restartPlayback)
 
-// Handle custom number input buttons
-numInputContainer.forEach((container) => {
-    let interval
-    container.addEventListener("mousedown", (e) => {
+function startHold(e, container) {
         const addBtn = e.target.closest('.add');
         const subtractBtn = e.target.closest(".subtract");
         const number = container.querySelector('input[type="number"]')
@@ -456,49 +482,59 @@ numInputContainer.forEach((container) => {
         if (subtractBtn) {
             interval = setInterval(() => number.stepDown(), 75);
         }
-    });
-    container.addEventListener("mouseup", () => {
+}
+
+function stopHold(container) {
+    console.log("Hi mom")
         clearInterval(interval);
         const input = container.querySelector('input')
         updateValues(input)
         updateDisplays();
         restartPlayback();
         limitBpms();
+}
+
+// Handle custom number input buttons
+let interval
+numInputContainer.forEach((container) => {
+    ['mousedown', 'touchstart'].forEach((event) => {
+        container.addEventListener(event, (e) => {
+            startHold(e, container)
+        })
+    })
+
+    container.addEventListener('mouseup', () => {
+        stopHold(container);
     });
-
+    container.addEventListener('mouseleave', () => {
+        stopHold(container);
+    });
+    container.addEventListener('touchend', () => {
+        stopHold(container);
+    });
+    container.addEventListener('touchcancel', () => {
+        stopHold(container);
+    });
+    // container.addEventListener("mousedown", (e) => {
+    //     const addBtn = e.target.closest('.add');
+    //     const subtractBtn = e.target.closest(".subtract");
+    //     const number = container.querySelector('input[type="number"]')
+    //     if (addBtn) {
+    //         interval = setInterval(() => number.stepUp(), 75);
+    //     }
+    //     if (subtractBtn) {
+    //         interval = setInterval(() => number.stepDown(), 75);
+    //     }
+    // });
+    // container.addEventListener("mouseup", () => {
+    //     clearInterval(interval);
+    //     const input = container.querySelector('input')
+    //     updateValues(input)
+    //     updateDisplays();
+    //     restartPlayback();
+    //     limitBpms();
+    // });
 });
-
-
-// Map: sets input value to its corresponding variable
-const setters = {
-    'bpm-input' : (val) => mainBPM = val,
-    'pulse' : (val) => mainPulseCount = val,
-    'polyrhythm' : (val) => secondaryPulseCount = val,
-    'main-subdivision' : (val) => mainSubdivision = val,
-    'secondary-subdivision' : (val) => secondarySubdivision = val,
-    'accel-cycles' : (val) => cycleCount = val,
-    'bpm-interval' : (val) => bpmInterval = val,
-    'start-bpm-display' : (val) => {
-        startBpm = val
-        limitBpms()
-        restartPlayback()
-    },
-    'end-bpm-display' : (val) => {
-        endBPM = val
-        limitBpms()
-        restartPlayback()
-    }
-};
-
-// From plus/minus buttons
-// Points an input value to setters which resets the correspoding variables
-function updateValues(el) {
-    const func = setters[el.id];
-    if (!func) return;
-    func(parseInt(el.value));
-};
-
-
 
 // Initialize
 updateDisplays();
