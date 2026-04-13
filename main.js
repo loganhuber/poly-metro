@@ -445,7 +445,17 @@ function createMidiFileName() {
 }
 
 // Event listeners
+
+// Start/stop. Button, spacebar, and enter key
 startStopBtn.addEventListener('click', startStopPlayback);
+document.addEventListener('keydown', (event) => {
+    if (event.code == 'Space' || event.code == 'Enter') {
+        event.preventDefault()
+        startStopPlayback()
+    }
+    else return
+})
+
 
 swapBtn.addEventListener('change', swapFrequencies);
 
@@ -524,9 +534,9 @@ numInputContainer.forEach((container) => {
     container.addEventListener('mouseup', () => {
         stopHold(container);
     });
-    container.addEventListener('mouseleave', () => {
-        stopHold(container);
-    });
+    // container.addEventListener('mouseleave', () => {
+    //     stopHold(container);
+    // });
     container.addEventListener('touchend', () => {
         stopHold(container);
     });
