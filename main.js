@@ -92,6 +92,25 @@ function updateValues(el) {
     func(parseInt(el.value));
 };
 
+const getDeviceType = () => {
+  const ua = navigator.userAgent;
+  if (/(tablet|ipad|playbook|silk)|(android(?!.*mobi))/i.test(ua)) {
+    return "tablet";
+  }
+  if (/Mobile|iP(hone|od)|Android|BlackBerry|IEMobile|Kindle|Silk-Accelerated|(hpw|web)OS|Opera M(obi|ini)/.test(ua)) {
+    return "mobile";
+  }
+  return "desktop";
+};
+
+function alertMobileUsers() {
+    const device = getDeviceType()
+    if (device !== 'desktop') {
+        alert("Mobile users may need to turn off Silent Mode to use this tool")
+    }
+}
+
+
 // Initialize audio context
 function initAudio() {
     audioContext = new (window.AudioContext || window.webkitAudioContext)();
@@ -519,4 +538,5 @@ numInputContainer.forEach((container) => {
 
 // Initialize
 updateDisplays();
+alertMobileUsers();
 
