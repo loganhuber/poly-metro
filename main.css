@@ -153,6 +153,12 @@ outline: 0;
 background-color: var(--button-hover-bg);
 }
 
+.unselectable {
+  -webkit-user-select: none; /* Safari, Chrome, Opera */
+  -moz-user-select: none;    /* Firefox */
+  -ms-user-select: none;     /* Internet Explorer/Edge */
+  user-select: none;         /* Standard syntax */
+}
 
 
 /* end utils */
@@ -238,8 +244,6 @@ background-color: var(--button-hover-bg);
     margin-top: 20px;
     display: grid;
     grid-template-columns: auto auto;
-    /* align-items: center;
-    justify-content: center; */
     width: 100%;
     gap: 10px;
 
@@ -250,21 +254,19 @@ background-color: var(--button-hover-bg);
     display: flex;
     flex-direction: row;
     align-items: center;
-    gap: .4rem;
+    justify-content: flex-end;
+
+    /* gap: .1rem; */
     background-color: #1e1c1c;
     border-radius: 5px;
     margin: 0 auto;
     padding: 3% 3%;
 
         & > * {
-        width: 45%;
-        margin: 5px;
+        user-select: none;
     }
 }
 
-/* .bpm-control {
-    display: flex;
-} */
 
 .bpm-control.hidden {
     display: none;
@@ -310,33 +312,13 @@ background-color: var(--button-hover-bg);
 }
 
 
-/* .controls {
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-    margin-bottom: 30px;
-    flex: 1;
-} */
-
-/* .polyrhythm-control {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 20px;
-} */
-/* .control-group {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    /* justify-content: space-between; */
-/* } */ 
-
 label {
     font-weight: bold;
     margin-right: 10px;
 }
 
 input[type="number"], select, input[type="range"] {
+    font-weight: 800;
     text-align: center;
     padding: 5px;
     border: 1px solid #ccc;
@@ -402,9 +384,10 @@ input[type="range"] {
 }
 
 button.add, button.subtract {
-    /* border-radius: 50%; */
-    width: 2.2rem;
-    border: 1px solid var(--background-main);
+    width: 3rem;
+    height: 2rem;
+    /* border: 2px solid var(--background-main); */
+    border: none;
     border-radius: 5px;
     margin: 2px 2px;
     /* padding: 0 20px; */
@@ -423,9 +406,7 @@ button.add, button.subtract {
     display: flex;
     flex-direction: column;
     align-items: center;
-    & > * {
-        user-select: none;
-    }
+
 }
 
 .visualization {
@@ -454,8 +435,6 @@ button.add, button.subtract {
 }
 
 .dot {
-    /* width: 2rem;
-    height: 2rem; */
     background-color: var(--primary-text);
     border-radius: 50%;
     transition: background-color 0.1s;
@@ -521,5 +500,12 @@ button.add, button.subtract {
 
     .info-container {
         width: 90%;
+    }
+
+    .control-card-container {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
     }
 }

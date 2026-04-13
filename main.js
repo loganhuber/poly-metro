@@ -485,7 +485,6 @@ function startHold(e, container) {
 }
 
 function stopHold(container) {
-    console.log("Hi mom")
         clearInterval(interval);
         const input = container.querySelector('input')
         updateValues(input)
@@ -502,7 +501,7 @@ numInputContainer.forEach((container) => {
             startHold(e, container)
         })
     })
-
+    // Extra events for touch screens
     container.addEventListener('mouseup', () => {
         stopHold(container);
     });
@@ -515,25 +514,7 @@ numInputContainer.forEach((container) => {
     container.addEventListener('touchcancel', () => {
         stopHold(container);
     });
-    // container.addEventListener("mousedown", (e) => {
-    //     const addBtn = e.target.closest('.add');
-    //     const subtractBtn = e.target.closest(".subtract");
-    //     const number = container.querySelector('input[type="number"]')
-    //     if (addBtn) {
-    //         interval = setInterval(() => number.stepUp(), 75);
-    //     }
-    //     if (subtractBtn) {
-    //         interval = setInterval(() => number.stepDown(), 75);
-    //     }
-    // });
-    // container.addEventListener("mouseup", () => {
-    //     clearInterval(interval);
-    //     const input = container.querySelector('input')
-    //     updateValues(input)
-    //     updateDisplays();
-    //     restartPlayback();
-    //     limitBpms();
-    // });
+
 });
 
 // Initialize
