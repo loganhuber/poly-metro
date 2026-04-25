@@ -92,6 +92,8 @@ function updateValues(el) {
     func(parseInt(el.value));
 };
 
+// get device type and altert mobile users that silent mode may need
+// to be turned off
 const getDeviceType = () => {
   const ua = navigator.userAgent;
   if (/(tablet|ipad|playbook|silk)|(android(?!.*mobi))/i.test(ua)) {

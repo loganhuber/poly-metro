@@ -16,8 +16,9 @@ body {
     background-color: var(--card-bg);
     color: var(--primary-text);
     box-sizing: border-box;
-    width: 100%;
-    overflow-x: hidden;
+    margin: 0;
+    padding: 0;
+    /* overflow-x: hidden; */
 }
 
 h1 {
@@ -28,11 +29,10 @@ h1 {
 header {
     position: absolute;
     top: 0;
-    width: 110%;
-    margin-left: -5px;
+    width: 100%;
     background-color: rgb(19, 19, 19);
     color: var(--primary-text);
-    overflow-x: auto;
+    /* overflow-x: auto; */
 }
 
 nav {
@@ -173,7 +173,7 @@ background-color: var(--button-hover-bg);
 .tab.visible {
     margin: 0;
     margin-top: 100px;
-    padding: 20px;
+    /* padding: 20px; */
     padding-bottom: 100px;
     display: flex;
     flex-direction: column;
@@ -181,7 +181,7 @@ background-color: var(--button-hover-bg);
     align-items: center;
     gap: 20px;
     min-height: 100vh;
-    width: 100vw;
+    width: 100%;
     opacity: 1;
     transition: opacity 0.5s ease-in-out;
 }
@@ -484,18 +484,28 @@ button.add, button.subtract {
 /* MEDIA QUERIES */
 @media (max-width: 800px) {
     .visualization {
+        padding: 0;
         .flex-row {
             flex-direction: column;
             align-items: center;
         }
     }
 
+
+    .settings-container {
+        padding: 8px;
+
+    }
     .metronome-container {
-        width: 85vw;
+        width: 80%;
+        padding: 8px;
+        margin: 0;
+
     }
 
     .export-container {
         width: 90%;
+        padding: 8px;
     }
 
     .info-container {
@@ -507,5 +517,11 @@ button.add, button.subtract {
         flex-direction: column;
         justify-content: center;
         align-items: center;
+    }
+
+    .tab {
+        width: 100%;
+        margin: 0;
+        padding: 0;
     }
 }
