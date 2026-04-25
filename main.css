@@ -414,7 +414,7 @@ button.add, button.subtract {
     display: flex;
     flex-direction: column;
     gap: 20px;
-    width: clamp(300px, 80%, 100%);
+    width: clamp(240px, 80%, 100%);
     margin: 10px auto;
     background-color: var(--card-bg);
     border-radius: 5px;
