@@ -48,8 +48,6 @@ const elements = {
     mainVolume : mainVolumeSlider,
     secondaryVolume : secondaryVolumeSlider,
     endBPM : endBpmDisplay,
-    // BPM acceleration variables
-    cycleCount : accelCyclesInput,
     bpmInterval : bpmIntervalInput,
     startBpm : startBpmDisplay
 }
@@ -63,12 +61,12 @@ const state = {
     mainVolume : 0.5,
     secondaryVolume : 0.5,
     endBPM : parseInt(endBpmDisplay.value, 10) || 180,
-    // BPM acceleration variables
-    cycleCount : 0,
     bpmInterval : parseInt(bpmIntervalInput.value, 10) || 5,
     startBpm : parseInt(startBpmDisplay.value, 10) || mainBPM
 }
 
+// BPM acceleration variables
+let cycleCount = 0
 
 // Scheduler variables
 let nextMainSubdivisionTime = 0;
@@ -92,7 +90,7 @@ const setters = {
     'polyrhythm' : (val) => state.secondaryPulseCount = val,
     'main-subdivision' : (val) => state.mainSubdivision = val,
     'secondary-subdivision' : (val) => state.secondarySubdivision = val,
-    'accel-cycles' : (val) => state.cycleCount = val,
+    'accel-cycles' : (val) => cycleCount = val,
     'bpm-interval' : (val) => state.bpmInterval = val,
     'start-bpm-display' : (val) => {
         state.startBpm = val
@@ -141,7 +139,7 @@ function isSwapped() {
 
 function accelerateBPM() {
     if (state.mainBPM >= state.endBPM) return; // Stop accelerating if we've reached the target BPM
-    state.cycleCount = 0;
+    cycleCount = 0;
     state.mainBPM += state.bpmInterval;
     if (state.mainBPM >= state.endBPM) {
         state.mainBPM = state.endBPM
@@ -150,6 +148,7 @@ function accelerateBPM() {
     setTimeout(() => {
         updateDisplays();
     }, 50);
+    
 }
 
 // Hard limit at 300BPM for mainBPm and endBPM
@@ -211,7 +210,6 @@ function createClickSound(frequency = 800, duration = 0.1, volume = state.mainVo
 // Scheduler for beats and subdivisions
 function scheduler() {
     if (!isPlaying) return;
-    // limitBpms()
     
     const currentTime = audioContext.currentTime;
     const mainCount = state.mainPulseCount;
@@ -230,10 +228,10 @@ function scheduler() {
         flashDot(mainDotsContainer, mainSubdivisionStep % totalMainSubdivisions);
         nextMainSubdivisionTime += mainInterval;
         mainSubdivisionStep++;
-        if (isBeat) state.cycleCount++;
+        if (isBeat) cycleCount++;
     }
 
-    if (accelEnabled() && state.cycleCount >= state.mainPulseCount * parseInt(accelCyclesInput.value)) {
+    if (accelEnabled() && cycleCount >= state.mainPulseCount * parseInt(accelCyclesInput.value)) {
         accelerateBPM();
     }
     
@@ -351,7 +349,7 @@ function startStopPlayback() {
         nextSecondarySubdivisionTime = audioContext.currentTime;
         mainSubdivisionStep = 0;
         secondarySubdivisionStep = 0;
-        state.cycleCount = 0;
+        cycleCount = 0;
         startStopBtn.textContent = 'Stop';
         scheduler();
     } else {
@@ -412,7 +410,7 @@ function generateMidiData(totalSeconds) {
     
     if (state.secondaryPulseCount > 0) {
         const secondaryBPM = state.mainBPM * state.secondaryPulseCount / mainCount;
-        const secondaryInterval = 60 / secondaryBPM / secondarySubdivision;
+        const secondaryInterval = 60 / secondaryBPM / state.secondarySubdivision;
         
         for (let time = 0; time < totalSeconds; time += secondaryInterval) {
             const duration = (secondarySubdivisionStep % state.secondarySubdivision === 0) ? 0.08 : 0.05;
@@ -428,7 +426,7 @@ function generateMidiData(totalSeconds) {
 }
 
 function createMidiFile() {
-    const totalSeconds = (parseInt(midiCyclesInput.value * selectedPulseInput.value) || 4) * 60 / mainBPM;
+    const totalSeconds = (parseInt(midiCyclesInput.value * selectedPulseInput.value) || 4) * 60 / state.mainBPM;
     const midiData = generateMidiData(totalSeconds);
     const midi = new Midi();
     const track = midi.addTrack();
@@ -507,19 +505,20 @@ function displaySavedPresets() {
 
     if (savedPresets.length == 0) return;
 
-    
     savedPresets.forEach((preset) => {
         const wrapper = document.createElement('li');
-        wrapper.classList.add('saved-preset');
-        wrapper.classList.add('flex-row')
-        wrapper.setAttribute("id", preset.name)
         const deleteBtn = document.createElement('button');
-        deleteBtn.classList.add("delete-preset-btn", "button");
-        deleteBtn.textContent = "Remove"
-        const presetDisplay = document.createElement("button")
-        presetDisplay.classList.add("preset-display");
+        const presetDisplay = document.createElement("button");
 
+        wrapper.classList.add('saved-preset', 'flex-row');
+        wrapper.setAttribute("id", preset.name);
+
+        deleteBtn.classList.add("delete-preset-btn", "button");
+        deleteBtn.textContent = "Remove";
+
+        presetDisplay.classList.add("preset-display");
         presetDisplay.textContent = preset.name;
+
         wrapper.appendChild(presetDisplay);
         wrapper.appendChild(deleteBtn);
         savedPresetsContainer.appendChild(wrapper);
@@ -667,7 +666,7 @@ savePresetBtn.addEventListener("click", () => {
     displaySavedPresets()
 })
 
-openPresetModal.addEventListener("click", displaySavedPresets)
+openPresetModal.addEventListener("click", displaySavedPresets);
 
 savedPresetsContainer.addEventListener("click", (e) => {
     handlePresets(e)
@@ -677,4 +676,5 @@ savedPresetsContainer.addEventListener("click", (e) => {
 // Initialize
 updateDisplays();
 alertMobileUsers();
+
 
