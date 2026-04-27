@@ -37,6 +37,8 @@ header {
 
 nav {
     margin: 0;
+    display: flex;
+    justify-content: space-between;
 }
 
 nav > ul {
@@ -80,6 +82,12 @@ article {
     justify-content: center;
     gap: 20px;
     flex: 1;
+}
+
+.flex-column {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 .no-wrap {
@@ -239,6 +247,63 @@ background-color: var(--button-hover-bg);
 
 
 /* COMPONENTS */
+
+dialog {
+    background-color: var(--background-container);
+    color: white;
+    border-radius: 5px;
+    border: none;
+
+    .button {
+        width: auto;
+        padding: 5px;
+        margin: auto;
+    }
+
+}
+dialog::backdrop {
+  background-color: rgba(0, 0, 0, 0.6); /* Dims to 60% black */
+  backdrop-filter: blur(4px);            /* Optional: adds a blur */
+}
+
+#open-preset-modal {
+    background: none;
+    border: none;
+    padding-right: 30px;
+
+}
+
+#open-preset-modal > i:hover {
+    cursor: pointer;
+}
+/* .save-presets-container {
+} */
+
+#saved-presets {
+    display: flex;
+    flex-direction: column;
+    width: 80%;
+
+}
+.saved-preset {
+    justify-content: flex-end;
+    padding: 0;
+
+}
+
+.preset-display {
+    background-color: var(--card-bg);
+    color: white;
+    border: none;
+    font-size: 20px;
+    margin: 5px 0;
+    width: auto;
+    flex: 1;
+
+    &:hover {
+        cursor: pointer;
+    }
+}
 
 .control-card-container {
     margin-top: 20px;

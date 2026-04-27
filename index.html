@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Polyrhythmic Metronome</title>
     <link rel="stylesheet" href="main.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 </head>
 <body>
     <header role="banner">
@@ -14,8 +15,26 @@
                 <li class="nav-link"><button class="tab-btn" data-target="tab-instructions">Instructions</button></li>
                 <li class="nav-link"><button class="tab-btn" data-target="tab-me">Me</button></li>
             </ul>
+            <button id="open-preset-modal" command="show-modal" commandfor="save-dialog"><i class="fa fa-save" style="font-size:24px; color:white;"></i></button>
         </nav>
     </header>
+    <dialog id="save-dialog">
+
+        <div class="save-preset-container flex-column">
+            <p>Save a preset to local browser storage</p>
+            <div class="flex-row">
+                <input id="state-title" type="text" placeholder="preset-01" value="preset-01">
+                <button class="button" id="save-preset-btn">Save</button>
+            </div>
+            <p>Saved Presets:</p>
+            <ul id="saved-presets">
+                
+                
+            </ul>
+
+            <button class="button" commandfor="save-dialog" command="close">Close</button>
+        </div>
+    </dialog>
 
     <div class="tab visible" id="tab-metronome">
         <div class="settings-container">

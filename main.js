@@ -20,6 +20,9 @@ const selectedPolyrhythmInput = document.getElementById('polyrhythm');
 const exportMidiBtn = document.getElementById('export-midi');
 const midiCyclesInput = document.getElementById('cycles');
 const numInputContainer = document.querySelectorAll('.number-input-container');
+const savedPresetsContainer = document.getElementById("saved-presets");
+const openPresetModal = document.getElementById('open-preset-modal');
+const savePresetBtn = document.getElementById("save-preset-btn");
 
 // acceleration mode settings
 const accelCyclesInput = document.getElementById('accel-cycles');
@@ -35,14 +38,37 @@ const accelEnabled = () => {
 // Audio context
 let audioContext;
 let isPlaying = false;
-let mainBPM = 120;
-let mainSubdivision = parseInt(mainSubdivisionInput.value, 10) || 1;
-let secondarySubdivision = parseInt(secondarySubdivisionInput.value, 10) || 1;
-let mainPulseCount = parseInt(selectedPulseInput.value, 10) || 4;
-let secondaryPulseCount = parseInt(selectedPolyrhythmInput.value, 10) || 3;
-let mainVolume = 0.5;
-let secondaryVolume = 0.5;
-let endBPM = parseInt(endBpmDisplay.value, 10) || 180;
+
+const elements = {
+    mainBPM : bpmInput,
+    mainSubdivision : mainSubdivisionInput,
+    secondarySubdivision : secondarySubdivisionInput,
+    mainPulseCount : selectedPulseInput,
+    secondaryPulseCount : selectedPolyrhythmInput,
+    mainVolume : mainVolumeSlider,
+    secondaryVolume : secondaryVolumeSlider,
+    endBPM : endBpmDisplay,
+    // BPM acceleration variables
+    cycleCount : accelCyclesInput,
+    bpmInterval : bpmIntervalInput,
+    startBpm : startBpmDisplay
+}
+
+const state = {
+    mainBPM : 120,
+    mainSubdivision : parseInt(mainSubdivisionInput.value, 10) || 1,
+    secondarySubdivision : parseInt(secondarySubdivisionInput.value, 10) || 1,
+    mainPulseCount : parseInt(selectedPulseInput.value, 10) || 4,
+    secondaryPulseCount : parseInt(selectedPolyrhythmInput.value, 10) || 3,
+    mainVolume : 0.5,
+    secondaryVolume : 0.5,
+    endBPM : parseInt(endBpmDisplay.value, 10) || 180,
+    // BPM acceleration variables
+    cycleCount : 0,
+    bpmInterval : parseInt(bpmIntervalInput.value, 10) || 5,
+    startBpm : parseInt(startBpmDisplay.value, 10) || mainBPM
+}
+
 
 // Scheduler variables
 let nextMainSubdivisionTime = 0;
@@ -50,10 +76,6 @@ let nextSecondarySubdivisionTime = 0;
 let mainSubdivisionStep = 0;
 let secondarySubdivisionStep = 0;
 
-// BPM Acceleration Variables
-let cycleCount = 0;
-let bpmInterval = parseInt(bpmIntervalInput.value, 10) || 5
-let startBpm = parseInt(startBpmDisplay.value, 10) || mainBPM
 
 const frequencies = {
     first: 800,
@@ -65,27 +87,27 @@ const frequencies = {
 
 // Map: sets input value to its corresponding variable
 const setters = {
-    'bpm-input' : (val) => mainBPM = val,
-    'pulse' : (val) => mainPulseCount = val,
-    'polyrhythm' : (val) => secondaryPulseCount = val,
-    'main-subdivision' : (val) => mainSubdivision = val,
-    'secondary-subdivision' : (val) => secondarySubdivision = val,
-    'accel-cycles' : (val) => cycleCount = val,
-    'bpm-interval' : (val) => bpmInterval = val,
+    'bpm-input' : (val) => state.mainBPM = val,
+    'pulse' : (val) => state.mainPulseCount = val,
+    'polyrhythm' : (val) => state.secondaryPulseCount = val,
+    'main-subdivision' : (val) => state.mainSubdivision = val,
+    'secondary-subdivision' : (val) => state.secondarySubdivision = val,
+    'accel-cycles' : (val) => state.cycleCount = val,
+    'bpm-interval' : (val) => state.bpmInterval = val,
     'start-bpm-display' : (val) => {
-        startBpm = val
+        state.startBpm = val
         limitBpms()
         restartPlayback()
     },
     'end-bpm-display' : (val) => {
-        endBPM = val
+        state.endBPM = val
         limitBpms()
         restartPlayback()
     }
 };
 
-// From plus/minus buttons
-// Points an input value to setters which resets the correspoding variables
+// For plus/minus buttons
+// Points an input value from DOM to setters which resets the correspoding variables
 function updateValues(el) {
     const func = setters[el.id];
     if (!func) return;
@@ -112,23 +134,17 @@ function alertMobileUsers() {
     }
 }
 
-
-// Initialize audio context
-function initAudio() {
-    audioContext = new (window.AudioContext || window.webkitAudioContext)();
-}
-
 // Check if user selected to swap tones
 function isSwapped() {
     return swapBtn.checked;
 };
 
 function accelerateBPM() {
-    if (mainBPM >= endBPM) return; // Stop accelerating if we've reached the target BPM
-    cycleCount = 0;
-    mainBPM += bpmInterval;
-    if (mainBPM >= endBPM) {
-        mainBPM = endBPM
+    if (state.mainBPM >= state.endBPM) return; // Stop accelerating if we've reached the target BPM
+    state.cycleCount = 0;
+    state.mainBPM += state.bpmInterval;
+    if (state.mainBPM >= state.endBPM) {
+        state.mainBPM = state.endBPM
     }
     // Stop display from cutting off last dot in the display
     setTimeout(() => {
@@ -138,18 +154,18 @@ function accelerateBPM() {
 
 // Hard limit at 300BPM for mainBPm and endBPM
 function limitBpms() {
-    if (mainBPM > 300) {
-        mainBPM = 300;
+    if (state.mainBPM > 300) {
+        state.mainBPM = 300;
         bpmInput.value = 300;
         startBpmDisplay.value = 300;
         bpmDisplay.textContent = 300;
         endBpmDisplay.value = 300;
         restartPlayback()
     }
-    if (endBPM > 300) {
-        endBPM = 300;
+    if (state.endBPM > 300) {
+        state.endBPM = 300;
         endBpmDisplay.value = 300;
-        endBpmDisplay.setAttribute('min', mainBPM);
+        endBpmDisplay.setAttribute('min', state.mainBPM);
         restartPlayback()
     };
 };
@@ -169,8 +185,13 @@ function getFrequency(isMainPulse, isSubdivision, isSecondary = false, isFirstBe
     }
 }
 
+// Initialize audio context
+function initAudio() {
+    audioContext = new (window.AudioContext || window.webkitAudioContext)();
+}
+
 // Modular sound generation - easy to customize later
-function createClickSound(frequency = 800, duration = 0.1, volume = mainVolume) {
+function createClickSound(frequency = 800, duration = 0.1, volume = state.mainVolume) {
     const oscillator = audioContext.createOscillator();
     const gainNode = audioContext.createGain();
     
@@ -193,14 +214,14 @@ function scheduler() {
     // limitBpms()
     
     const currentTime = audioContext.currentTime;
-    const mainCount = mainPulseCount;
-    const totalMainSubdivisions = mainPulseCount * mainSubdivision;
-    const mainInterval = 60 / mainBPM / mainSubdivision;
+    const mainCount = state.mainPulseCount;
+    const totalMainSubdivisions = state.mainPulseCount * state.mainSubdivision;
+    const mainInterval = 60 / state.mainBPM / state.mainSubdivision;
     
     // Schedule main subdivisions
     while (nextMainSubdivisionTime < currentTime + 0.1) {
-        const mainPulseIndex = Math.floor(mainSubdivisionStep / mainSubdivision) % mainCount;
-        const subIndex = mainSubdivisionStep % mainSubdivision;
+        const mainPulseIndex = Math.floor(mainSubdivisionStep / state.mainSubdivision) % mainCount;
+        const subIndex = mainSubdivisionStep % state.mainSubdivision;
         // const freq = subIndex === 0 && mainPulseIndex === 0 ? frequencies.first : frequencies.main;
         const isBeat = subIndex === 0;
         const isFirstBeat = isBeat && mainPulseIndex === 0;
@@ -209,23 +230,23 @@ function scheduler() {
         flashDot(mainDotsContainer, mainSubdivisionStep % totalMainSubdivisions);
         nextMainSubdivisionTime += mainInterval;
         mainSubdivisionStep++;
-        if (isBeat) cycleCount++;
+        if (isBeat) state.cycleCount++;
     }
 
-    if (accelEnabled() && cycleCount >= mainPulseCount * parseInt(accelCyclesInput.value)) {
+    if (accelEnabled() && state.cycleCount >= state.mainPulseCount * parseInt(accelCyclesInput.value)) {
         accelerateBPM();
     }
     
     
     // Schedule secondary subdivisions if polyrhythm selected
-    if (secondaryPulseCount > 0) {
-        const secondaryBPM = mainBPM * secondaryPulseCount / mainCount;
-        const totalSecondarySubdivisions = secondaryPulseCount * secondarySubdivision;
-        const secondaryInterval = 60 / secondaryBPM / secondarySubdivision;
-        const isBeatSecondary = secondarySubdivisionStep % secondarySubdivision === 0;
+    if (state.secondaryPulseCount > 0) {
+        const secondaryBPM = state.mainBPM * state.secondaryPulseCount / mainCount;
+        const totalSecondarySubdivisions = state.secondaryPulseCount * state.secondarySubdivision;
+        const secondaryInterval = 60 / secondaryBPM / state.secondarySubdivision;
+        const isBeatSecondary = secondarySubdivisionStep % state.secondarySubdivision === 0;
         const freq = getFrequency(false, !isBeatSecondary, true, false);
         while (nextSecondarySubdivisionTime < currentTime + 0.1) {
-            createClickSound(freq, isBeatSecondary ? 0.08 : 0.05, secondaryVolume);
+            createClickSound(freq, isBeatSecondary ? 0.08 : 0.05, state.secondaryVolume);
             flashDot(secondaryDotsContainer, secondarySubdivisionStep % totalSecondarySubdivisions);
             nextSecondarySubdivisionTime += secondaryInterval;
             secondarySubdivisionStep++;
@@ -250,17 +271,22 @@ function flashDot(container, index) {
 
 // Update displays
 function updateDisplays() {
-    bpmDisplay.textContent = `${mainBPM} BPM`;
-    // startBPMDisplay.value = mainBPM;
-    endBpmDisplay.setAttribute('min', mainBPM);
 
-    // Ensure end BPM can not be lower than main BPM
-    if (mainBPM > endBpmDisplay.value) {
-        endBpmDisplay.value = mainBPM
+    for (const key in state) {
+        elements[key].value = state[key]
     }
 
-    if (secondaryPulseCount > 0) {
-        const secondaryBPM = Math.round(mainBPM * secondaryPulseCount / mainPulseCount);
+    bpmDisplay.textContent = `${state.mainBPM} BPM`;
+    endBpmDisplay.setAttribute('min', state.mainBPM);
+    
+
+    // Ensure end BPM can not be lower than main BPM
+    if (state.mainBPM > endBpmDisplay.value) {
+        endBpmDisplay.value = state.mainBPM
+    }
+
+    if (state.secondaryPulseCount > 0) {
+        const secondaryBPM = Math.round(state.mainBPM * state.secondaryPulseCount / state.mainPulseCount);
         secondaryBpmDisplay.textContent = `${secondaryBPM} BPM`;
     } else {
         secondaryBpmDisplay.textContent = '';
@@ -274,24 +300,24 @@ function generateDots() {
     mainDotsContainer.innerHTML = '';
     secondaryDotsContainer.innerHTML = '';
     
-    for (let i = 0; i < mainPulseCount; i++) {
+    for (let i = 0; i < state.mainPulseCount; i++) {
         const largeDot = document.createElement('div');
         largeDot.className = 'dot large';
         mainDotsContainer.appendChild(largeDot);
 
-        for (let j = 1; j < mainSubdivision; j++) {
+        for (let j = 1; j < state.mainSubdivision; j++) {
             const smallDot = document.createElement('div');
             smallDot.className = 'dot small';
             mainDotsContainer.appendChild(smallDot);
         }
     }
     
-    for (let i = 0; i < secondaryPulseCount; i++) {
+    for (let i = 0; i < state.secondaryPulseCount; i++) {
         const largeDot = document.createElement('div');
         largeDot.className = 'dot large secondary';
         secondaryDotsContainer.appendChild(largeDot);
 
-        for (let j = 1; j < secondarySubdivision; j++) {
+        for (let j = 1; j < state.secondarySubdivision; j++) {
             const smallDot = document.createElement('div');
             smallDot.className = 'dot small secondary';
             secondaryDotsContainer.appendChild(smallDot);
@@ -301,7 +327,7 @@ function generateDots() {
 
 // Show/hide swap control based on whether a polyrhythm is selected
 function updateSwapControl() {
-    if (secondaryPulseCount > 0) {
+    if (state.secondaryPulseCount > 0) {
         swapBtn.parentElement.classList.remove('hidden');
     } else {
         swapBtn.parentElement.classList.add('hidden');
@@ -325,16 +351,15 @@ function startStopPlayback() {
         nextSecondarySubdivisionTime = audioContext.currentTime;
         mainSubdivisionStep = 0;
         secondarySubdivisionStep = 0;
-        cycleCount = 0;
+        state.cycleCount = 0;
         startStopBtn.textContent = 'Stop';
         scheduler();
     } else {
         
         if (accelEnabled()) {
             
-            console.log("start BPM " + startBpm)
-            bpmInput.value = startBpm;
-            mainBPM = startBpm;
+            bpmInput.value = state.startBpm;
+            state.mainBPM = state.startBpm;
             updateDisplays()
         };
         // Stop
@@ -353,8 +378,8 @@ function restartPlayback() {
 };
 
 function updatePulseCounts() {
-    mainPulseCount = parseInt(selectedPulseInput.value, 10) || 4;
-    secondaryPulseCount = parseInt(selectedPolyrhythmInput.value, 10) || 0;
+    state.mainPulseCount = parseInt(selectedPulseInput.value, 10) || 4;
+    state.secondaryPulseCount = parseInt(selectedPolyrhythmInput.value, 10) || 0;
     updateDisplays();
     restartPlayback();
 };
@@ -367,14 +392,14 @@ function frequencyToMidi(frequency) {
 // Generate Midi file based on current settings and user-selected number of cycles
 function generateMidiData(totalSeconds) {
     const midiData = [];
-    const mainInterval = 60 / mainBPM / mainSubdivision;
-    const mainCount = mainPulseCount;
-    const totalMainSubdivisions = mainPulseCount * mainSubdivision;
+    const mainInterval = 60 / state.mainBPM / state.mainSubdivision;
+    const mainCount = state.mainPulseCount;
+    const totalMainSubdivisions = state.mainPulseCount * state.mainSubdivision;
     
     for (let time = 0; time < totalSeconds; time += mainInterval) {
         const mainSubdivisionStep = Math.floor(time / mainInterval);
-        const mainPulseIndex = Math.floor(mainSubdivisionStep / mainSubdivision) % mainCount;
-        const subIndex = mainSubdivisionStep % mainSubdivision;
+        const mainPulseIndex = Math.floor(mainSubdivisionStep / state.mainSubdivision) % mainCount;
+        const subIndex = mainSubdivisionStep % state.mainSubdivision;
         const freq = subIndex === 0 && mainPulseIndex === 0 ? frequencies.first : frequencies.main;
         const duration = subIndex === 0 ? 0.1 : 0.06;
         
@@ -385,12 +410,12 @@ function generateMidiData(totalSeconds) {
         });
     }
     
-    if (secondaryPulseCount > 0) {
-        const secondaryBPM = mainBPM * secondaryPulseCount / mainCount;
+    if (state.secondaryPulseCount > 0) {
+        const secondaryBPM = state.mainBPM * state.secondaryPulseCount / mainCount;
         const secondaryInterval = 60 / secondaryBPM / secondarySubdivision;
         
         for (let time = 0; time < totalSeconds; time += secondaryInterval) {
-            const duration = (secondarySubdivisionStep % secondarySubdivision === 0) ? 0.08 : 0.05;
+            const duration = (secondarySubdivisionStep % state.secondarySubdivision === 0) ? 0.08 : 0.05;
             midiData.push({ 
                 time, 
                 midi: frequencyToMidi(frequencies.secondary),
@@ -440,10 +465,66 @@ function downloadMidiFile(url, filename) {
 
 // creates a name like 3over4_polyrhythm.mid 
 function createMidiFileName() {
-    const pulseInfo = `${mainPulseCount}`;
-    const polyrhythmInfo = `${secondaryPulseCount}`
+    const pulseInfo = `${state.mainPulseCount}`;
+    const polyrhythmInfo = `${state.secondaryPulseCount}`
 
     return `${polyrhythmInfo}over${pulseInfo}_polyrhythm.mid`;
+}
+
+function handlePresets(e) {
+    const row = e.target.closest(".saved-preset");
+    const preset = row.id 
+    const deleteBtn = row.querySelector(".delete-preset-btn")
+    const presetDisplay = row.querySelector('.preset-display')
+    const savedPresets = JSON.parse(localStorage.getItem('savedPresets'));
+
+    if (e.target.contains(deleteBtn)) {
+        const updatedPresets = savedPresets.filter((p) => {
+            return p.name !== preset
+        })
+        localStorage.setItem("savedPresets", JSON.stringify(updatedPresets))
+        displaySavedPresets()
+        return
+    }
+
+    if (e.target.contains(presetDisplay)) {
+        const newState = savedPresets.find((p) => {
+            return p.name === preset
+        })
+        console.log(newState)
+        for (const key in state) {
+            state[key] = newState[key]
+        }
+        updateDisplays()
+        return
+    }
+
+}
+
+function displaySavedPresets() {
+    savedPresetsContainer.innerHTML = ''
+    const savedPresets = JSON.parse(localStorage.getItem("savedPresets")).reverse() || [];
+
+    if (savedPresets.length == 0) return;
+
+    
+    savedPresets.forEach((preset) => {
+        const wrapper = document.createElement('li');
+        wrapper.classList.add('saved-preset');
+        wrapper.classList.add('flex-row')
+        wrapper.setAttribute("id", preset.name)
+        const deleteBtn = document.createElement('button');
+        deleteBtn.classList.add("delete-preset-btn", "button");
+        deleteBtn.textContent = "Remove"
+        const presetDisplay = document.createElement("button")
+        presetDisplay.classList.add("preset-display");
+
+        presetDisplay.textContent = preset.name;
+        wrapper.appendChild(presetDisplay);
+        wrapper.appendChild(deleteBtn);
+        savedPresetsContainer.appendChild(wrapper);
+    })
+
 }
 
 // Event listeners
@@ -451,12 +532,17 @@ function createMidiFileName() {
 // Start/stop. Button, spacebar, and enter key
 startStopBtn.addEventListener('click', startStopPlayback);
 document.addEventListener('keydown', (event) => {
+    // make sure user is on the metronome tab and the dialog is not open
+    const tab = document.getElementById('tab-metronome');
+    const dialog = document.getElementById("save-dialog");
+    if (dialog.open || tab.classList.contains('hidden')) return;
+
     if (event.code == 'Space' || event.code == 'Enter') {
         event.preventDefault()
         startStopPlayback()
     }
     else return
-})
+});
 
 
 swapBtn.addEventListener('change', swapFrequencies);
@@ -465,23 +551,23 @@ selectedPulseInput.addEventListener('change', updatePulseCounts);
 selectedPolyrhythmInput.addEventListener('change', updatePulseCounts);
 
 mainSubdivisionInput.addEventListener('input', (e) => {
-    mainSubdivision = Math.max(1, parseInt(e.target.value, 10) || 1);
+    state.mainSubdivision = Math.max(1, parseInt(e.target.value, 10) || 1);
     updateDisplays();
     restartPlayback();
 });
 
 secondarySubdivisionInput.addEventListener('input', (e) => {
-    secondarySubdivision = Math.max(1, parseInt(e.target.value, 10) || 1);
+    state.secondarySubdivision = Math.max(1, parseInt(e.target.value, 10) || 1);
     updateDisplays();
     restartPlayback();
 });
 
 mainVolumeSlider.addEventListener('input', (e) => {
-    mainVolume = parseFloat(e.target.value);
+    state.mainVolume = parseFloat(e.target.value);
 });
 
 secondaryVolumeSlider.addEventListener('input', (e) => {
-    secondaryVolume = parseFloat(e.target.value);
+    state.secondaryVolume = parseFloat(e.target.value);
 })
 
 exportMidiBtn.addEventListener('click', createMidiFile); 
@@ -547,6 +633,46 @@ numInputContainer.forEach((container) => {
     });
 
 });
+
+// Handles duplicate preset names
+function numerateTitle(title, arr) {
+    const regex = /-\d{2}$/g
+    const trimmed = title.replaceAll(regex, '')
+    let count = 1
+    for (const obj of arr) {
+        if (trimmed == obj.name.replaceAll(regex, '')) {
+            count++
+        }
+    }
+    return `${trimmed}-${count.toString().padStart(2, "0")}`
+}
+
+// save array of state objects in local storage under item 'savedPresets'
+savePresetBtn.addEventListener("click", () => {
+    const savedPresets = JSON.parse(localStorage.getItem('savedPresets')) || []
+    let title = document.getElementById("state-title").value
+
+    for (const preset of savedPresets) {
+        if (preset.name == title) {
+            title = numerateTitle(title, savedPresets)    
+        }
+    }
+    const currState = {
+        ...state,
+        name: title
+    };
+
+    savedPresets.push(currState);
+    localStorage.setItem("savedPresets", JSON.stringify(savedPresets));
+    displaySavedPresets()
+})
+
+openPresetModal.addEventListener("click", displaySavedPresets)
+
+savedPresetsContainer.addEventListener("click", (e) => {
+    handlePresets(e)
+} )
+
 
 // Initialize
 updateDisplays();
