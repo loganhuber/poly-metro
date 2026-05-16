@@ -198,7 +198,7 @@ function createClickSound(frequency = 800, duration = 0.1, volume = state.mainVo
     gainNode.connect(audioContext.destination);
     
     oscillator.frequency.setValueAtTime(frequency, audioContext.currentTime);
-    oscillator.type = 'square';
+    oscillator.type = 'triange';
     
     gainNode.gain.setValueAtTime(volume, audioContext.currentTime);
     gainNode.gain.exponentialRampToValueAtTime(0.001, audioContext.currentTime + duration);
